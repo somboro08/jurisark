@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - Juris Ark</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-balance-scale"></i>
+            <h2>Juris Ark Admin</h2>
+        </div>
+        
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="#dashboard" class="nav-link active" data-section="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#team" class="nav-link" data-section="team">
+                    <i class="fas fa-users"></i>
+                    <span>Équipe d'Experts</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#faq" class="nav-link" data-section="faq">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Questions Fréquentes</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#deadlines" class="nav-link" data-section="deadlines">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Délais à Surveiller</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#testimonials" class="nav-link" data-section="testimonials">
+                    <i class="fas fa-comments"></i>
+                    <span>Témoignages Clients</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#cases" class="nav-link" data-section="cases">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Succès d'Affaires</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#blog" class="nav-link" data-section="blog">
+                    <i class="fas fa-newspaper"></i>
+                    <span>Articles de Blog</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#formations" class="nav-link" data-section="formations">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Formations</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#appointments" class="nav-link" data-section="appointments">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Rendez-vous</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#settings" class="nav-link" data-section="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Paramètres</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Topbar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 id="pageTitle">Dashboard</h1>
+            </div>
+            
+            <div class="user-menu">
+                <div class="user-info">
+                    <div class="user-name" id="userName">Administrateur</div>
+                    <div class="user-role">Super Admin</div>
+                </div>
+                <button class="btn-logout" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Déconnexion
+                </button>
+            </div>
+        </header>
+        
+        <!-- Content Area -->
+        <main class="content-area">
+            <!-- Dashboard Section -->
+            <section id="dashboardSection" class="section-content">
+                <div class="dashboard-cards">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <span class="card-title">Membres d'Équipe</span>
+                        </div>
+                        <div class="card-value" id="teamCount">4</div>
+                        <div class="card-desc">Experts juridiques</div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-question-circle"></i>
+                            </div>
+                            <span class="card-title">Questions FAQ</span>
+                        </div>
+                        <div class="card-value" id="faqCount">5</div>
+                        <div class="card-desc">Questions fréquentes</div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <span class="card-title">Témoignages</span>
+                        </div>
+                        <div class="card-value" id="testimonialsCount">3</div>
+                        <div class="card-desc">Avis clients</div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            <span class="card-title">Succès d'Affaires</span>
+                        </div>
+                        <div class="card-value" id="casesCount">3</div>
+                        <div class="card-desc">Études de cas</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <span class="card-title">Rendez-vous</span>
+                        </div>
+                        <div class="card-value" id="appointmentsCount">0</div>
+                        <div class="card-desc">Demandes de consultation</div>
+                    </div>
+                </div>
+                
+                <div class="recent-activity">
+                    <h2>Activité Récente</h2>
+                    <div class="activity-list" id="activityList">
+                        <!-- Activités chargées dynamiquement -->
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Team Section -->
+            <section id="teamSection" class="section-content" style="display: none;">
+                <div class="section-header">
+                    <h2>Gestion des Experts</h2>
+                    <button class="btn-add" id="addTeamBtn">
+                        <i class="fas fa-plus"></i>
+                        Ajouter un Expert
+                    </button>
+                </div>
+                
+                <div class="data-table">
+                    <div class="table-header">
+                        <div class="table-title">Liste des Experts</div>
+                    </div>
+                    <table id="teamTable">
+                        <thead>
+                            <tr>
+                                <th>Photo</th>
+                                <th>Nom</th>
+                                <th>Titre</th>
+                                <th>Spécialité</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teamTableBody">
+                            <!-- Données chargées dynamiquement -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- FAQ Section -->
+            <section id="faqSection" class="section-content" style="display: none;">
+                <div class="section-header">
+                    <h2>Gestion des Questions Fréquentes</h2>
+                    <button class="btn-add" id="addFaqBtn">
+                        <i class="fas fa-plus"></i>
+                        Ajouter une Question
+                    </button>
+                </div>
+                
+                <div class="data-table">
+                    <div class="table-header">
+                        <div class="table-title">Liste des Questions</div>
+                    </div>
+                    <table id="faqTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Question</th>
+                                <th>Catégorie</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="faqTableBody">
+                            <!-- Données chargées dynamiquement -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- Deadlines Section -->
+            <section id="deadlinesSection" class="section-content" style="display: none;">
+                <div class="section-header">
+                    <h2>Gestion des Délais</h2>
+                    <button class="btn-add" id="addDeadlineBtn">
+                        <i class="fas fa-plus"></i>
+                        Ajouter un Délai
+                    </button>
+                </div>
+                
+                <div class="data-table">
+                    <div class="table-header">
+                        <div class="table-title">Délais à Surveiller</div>
+                    </div>
+                    <table id="deadlinesTable">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Urgent</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="deadlinesTableBody">
+                            <!-- Données chargées dynamiquement -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- Testimonials Section -->
+            <section id="testimonialsSection" class="section-content" style="display: none;">
+                <div class="section-header">
+                    <h2>Gestion des Témoignages</h2>
+                    <button class="btn-add" id="addTestimonialBtn">
+                        <i class="fas fa-plus"></i>
+                        Ajouter un Témoignage
+                    </button>
+                </div>
+                
+                <div class="data-table">
+                    <div class="table-header">
+                        <div class="table-title">Témoignages Clients</div>
+                    </div>
+                    <table id="testimonialsTable">
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>Fonction</th>
+                                <th>Témoignage</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="testimonialsTableBody">
+                            <!-- Données chargées dynamiquement -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- Cases Section -->
+            <section id="casesSection" class="section-content" style="display: none;">
+                <div class="section-header">
+                    <h2>Gestion des Succès d'Affaires</h2>
+                    <button class="btn-add" id="addCaseBtn">
+                        <i class="fas fa-plus"></i>
+                        Ajouter un Succès
+                    </button>
+                </div>
+                
+                <div class="data-table">
+                    <div class="table-header">
+                        <div class="table-title">Succès d'Affaires</div>
+                    </div>
+                    <table id="casesTable">
+                        <thead>
+                            <tr>
+                                <th>Titre</th>
+                                <th>Catégorie</th>
+                                <th>Montant</th>
+                                <th>Résultat</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="casesTableBody">
+                            <!-- Données chargées dynamiquement -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- Blog Section -->
+            <section id="blogSection" class="section-content" style="display: none;">
+                <div class="section-header">
+                    <h2>Gestion des Articles de Blog</h2>
+                    <button class="btn-add" id="addBlogBtn">
+                        <i class="fas fa-plus"></i>
+                        Ajouter un Article
+                    </button>
+                </div>
+                
+                <div class="data-table">
+                    <div class="table-header">
+                        <div class="table-title">Articles de Blog</div>
+                    </div>
+                    <table id="blogTable">
+                        <thead>
+                            <tr>
+                                <th>Titre</th>
+                                <th>Catégorie</th>
+                                <th>Date</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="blogTableBody">
+                            <!-- Données chargées dynamiquement -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Formations Section -->
+            <section id="formationsSection" class="section-content" style="display: none;">
+                <div class="section-header">
+                    <h2>Gestion des Formations</h2>
+                    <button class="btn-add" id="addFormationBtn">
+                        <i class="fas fa-plus"></i>
+                        Ajouter une Formation
+                    </button>
+                </div>
+                
+                <div class="data-table">
+                    <div class="table-header">
+                        <div class="table-title">Liste des Formations</div>
+                    </div>
+                    <table id="formationsTable">
+                        <thead>
+                            <tr>
+                                <th>Icon</th>
+                                <th>Titre</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="formationsTableBody">
+                            <!-- Données chargées dynamiquement -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Appointments Section -->
+            <section id="appointmentsSection" class="section-content" style="display: none;">
+                <div class="section-header">
+                    <h2>Gestion des Rendez-vous</h2>
+                </div>
+                
+                <div class="data-table">
+                    <div class="table-header">
+                        <div class="table-title">Liste des Rendez-vous</div>
+                    </div>
+                    <table id="appointmentsTable">
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>Contact</th>
+                                <th>Date & Heure</th>
+                                <th>Service</th>
+                                <th>Message</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appointmentsTableBody">
+                            <!-- Données chargées dynamiquement -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- Settings Section -->
+            <section id="settingsSection" class="section-content" style="display: none;">
+                <div class="section-header">
+                    <h2>Paramètres du Site</h2>
+                </div>
+                
+                <div class="settings-form">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Informations Générales</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="generalSettingsForm">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Nom du Cabinet</label>
+                                        <input type="text" class="form-control" id="siteName" value="JURISARK – CABINET JURIDIQUE ET FISCAL">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Email de Contact</label>
+                                        <input type="email" class="form-control" id="siteEmail" value="jurisark@gmail.com">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Téléphone</label>
+                                        <input type="text" class="form-control" id="sitePhone" value="+229 01 405 45 464 / +229 01 922 033 92">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Adresse</label>
+                                        <input type="text" class="form-control" id="siteAddress" value="Calavi, Akassato, En face de la Pharmacie Saint Steve, Pavé Kerekou">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Description du Cabinet</label>
+                                    <textarea class="form-control" id="siteDescription" rows="4">L’expertise du droit au service de votre tranquillité</textarea>
+                                </div>
+                                
+                                <button type="submit" class="btn-save">Enregistrer les modifications</button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="card" style="margin-top: 30px;">
+                        <div class="card-header">
+                            <h3>Sécurité</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="securitySettingsForm">
+                                <div class="form-group">
+                                    <label>Changer le mot de passe administrateur</label>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label>Nouveau mot de passe</label>
+                                            <input type="password" class="form-control" id="newPassword">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Confirmer le mot de passe</label>
+                                            <input type="password" class="form-control" id="confirmPassword">
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn-save">Mettre à jour le mot de passe</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Modals -->
+    
+    <!-- Team Modal -->
+    <div class="modal" id="teamModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="teamModalTitle">Ajouter un Expert</h3>
+                <button class="modal-close" data-modal="teamModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="teamForm">
+                    <input type="hidden" id="teamId">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nom complet *</label>
+                            <input type="text" class="form-control" id="teamName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Titre *</label>
+                            <input type="text" class="form-control" id="teamTitle" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Spécialité *</label>
+                            <select class="form-control" id="teamSpecialty" required>
+                                <option value="">Sélectionner une spécialité</option>
+                                <option value="Droit des affaires">Droit des affaires</option>
+                                <option value="Droit immobilier">Droit immobilier</option>
+                                <option value="Droit fiscal">Droit fiscal</option>
+                                <option value="Droit international">Droit international</option>
+                                <option value="Recouvrement">Recouvrement</option>
+                                <option value="Arbitrage">Arbitrage</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Expérience (années)</label>
+                            <input type="number" class="form-control" id="teamExperience" min="0" max="50">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Biographie *</label>
+                        <textarea class="form-control" id="teamBio" rows="4" required></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>URL de la photo</label>
+                            <input type="url" class="form-control" id="teamPhoto" placeholder="https://exemple.com/photo.jpg">
+                        </div>
+                        <div class="form-group">
+                            <label>Ordre d'affichage</label>
+                            <input type="number" class="form-control" id="teamOrder" min="1" max="20" value="1">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Informations de contact</label>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" class="form-control" id="teamEmail">
+                            </div>
+                            <div class="form-group">
+                                <label>LinkedIn</label>
+                                <input type="url" class="form-control" id="teamLinkedin" placeholder="https://linkedin.com/in/...">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" data-modal="teamModal">Annuler</button>
+                <button class="btn-save" id="saveTeamBtn">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- FAQ Modal -->
+    <div class="modal" id="faqModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="faqModalTitle">Ajouter une Question</h3>
+                <button class="modal-close" data-modal="faqModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="faqForm">
+                    <input type="hidden" id="faqId">
+                    
+                    <div class="form-group">
+                        <label>Question *</label>
+                        <input type="text" class="form-control" id="faqQuestion" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Réponse *</label>
+                        <textarea class="form-control" id="faqAnswer" rows="6" required></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Catégorie *</label>
+                            <select class="form-control" id="faqCategory" required>
+                                <option value="">Sélectionner une catégorie</option>
+                                <option value="Général">Général</option>
+                                <option value="Honoraires">Honoraires</option>
+                                <option value="Services">Services</option>
+                                <option value="Procédures">Procédures</option>
+                                <option value="Contact">Contact</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Ordre d'affichage</label>
+                            <input type="number" class="form-control" id="faqOrder" min="1" max="50" value="1">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" data-modal="faqModal">Annuler</button>
+                <button class="btn-save" id="saveFaqBtn">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Deadline Modal -->
+    <div class="modal" id="deadlineModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="deadlineModalTitle">Ajouter un Délai</h3>
+                <button class="modal-close" data-modal="deadlineModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="deadlineForm">
+                    <input type="hidden" id="deadlineId">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date *</label>
+                            <input type="date" class="form-control" id="deadlineDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Type de délai</label>
+                            <select class="form-control" id="deadlineType">
+                                <option value="Fiscal">Fiscal</option>
+                                <option value="Juridique">Juridique</option>
+                                <option value="Administratif">Administratif</option>
+                                <option value="Commercial">Commercial</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Description *</label>
+                        <input type="text" class="form-control" id="deadlineDescription" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Client concerné</label>
+                            <input type="text" class="form-control" id="deadlineClient" placeholder="Tous les clients">
+                        </div>
+                        <div class="form-group">
+                            <label>Urgent</label>
+                            <select class="form-control" id="deadlineUrgent">
+                                <option value="0">Non</option>
+                                <option value="1">Oui</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Notes supplémentaires</label>
+                        <textarea class="form-control" id="deadlineNotes" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" data-modal="deadlineModal">Annuler</button>
+                <button class="btn-save" id="saveDeadlineBtn">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Testimonial Modal -->
+    <div class="modal" id="testimonialModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="testimonialModalTitle">Ajouter un Témoignage</h3>
+                <button class="modal-close" data-modal="testimonialModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="testimonialForm">
+                    <input type="hidden" id="testimonialId">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nom du client *</label>
+                            <input type="text" class="form-control" id="testimonialName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Fonction/Entreprise *</label>
+                            <input type="text" class="form-control" id="testimonialPosition" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Témoignage *</label>
+                        <textarea class="form-control" id="testimonialContent" rows="5" required></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>URL de la photo</label>
+                            <input type="url" class="form-control" id="testimonialPhoto" placeholder="https://exemple.com/photo.jpg">
+                        </div>
+                        <div class="form-group">
+                            <label>Note (1-5)</label>
+                            <select class="form-control" id="testimonialRating">
+                                <option value="5">5 étoiles</option>
+                                <option value="4">4 étoiles</option>
+                                <option value="3">3 étoiles</option>
+                                <option value="2">2 étoiles</option>
+                                <option value="1">1 étoile</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Date du témoignage</label>
+                        <input type="date" class="form-control" id="testimonialDate">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" data-modal="testimonialModal">Annuler</button>
+                <button class="btn-save" id="saveTestimonialBtn">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Case Study Modal -->
+    <div class="modal" id="caseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="caseModalTitle">Ajouter un Succès d'Affaires</h3>
+                <button class="modal-close" data-modal="caseModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="caseForm">
+                    <input type="hidden" id="caseId">
+                    
+                    <div class="form-group">
+                        <label>Titre *</label>
+                        <input type="text" class="form-control" id="caseTitle" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Description *</label>
+                        <textarea class="form-control" id="caseDescription" rows="4" required></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Catégorie *</label>
+                            <select class="form-control" id="caseCategory" required>
+                                <option value="">Sélectionner une catégorie</option>
+                                <option value="Droit des affaires">Droit des affaires</option>
+                                <option value="Droit immobilier">Droit immobilier</option>
+                                <option value="Droit fiscal">Droit fiscal</option>
+                                <option value="Recouvrement">Recouvrement</option>
+                                <option value="Arbitrage">Arbitrage</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Résultat *</label>
+                            <select class="form-control" id="caseResult" required>
+                                <option value="Gagné">Gagné</option>
+                                <option value="Succès">Succès</option>
+                                <option value="Résolution">Résolution</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Montant</label>
+                            <input type="text" class="form-control" id="caseAmount" placeholder="2M€ ou 450M FCFA">
+                        </div>
+                        <div class="form-group">
+                            <label>Durée</label>
+                            <input type="text" class="form-control" id="caseDuration" placeholder="6 mois">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Résultat détaillé</label>
+                        <textarea class="form-control" id="caseOutcome" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" data-modal="caseModal">Annuler</button>
+                <button class="btn-save" id="saveCaseBtn">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Blog Modal -->
+    <div class="modal" id="blogModal">
+        <!-- ... (contenu du modal blog existant) ... -->
+    </div>
+
+    <!-- Formation Modal -->
+    <div class="modal" id="formationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="formationModalTitle">Ajouter une Formation</h3>
+                <button class="modal-close" data-modal="formationModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="formationForm">
+                    <input type="hidden" id="formationId">
+                    
+                    <div class="form-group">
+                        <label>Titre *</label>
+                        <input type="text" class="form-control" id="formationTitle" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Description *</label>
+                        <textarea class="form-control" id="formationDescription" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Icon (Font Awesome) *</label>
+                        <input type="text" class="form-control" id="formationIcon" placeholder="e.g., fas fa-briefcase" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" data-modal="formationModal">Annuler</button>
+                <button class="btn-save" id="saveFormationBtn">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirmation</h3>
+                <button class="modal-close" data-modal="confirmModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">Êtes-vous sûr de vouloir supprimer cet élément ?</p>
+            </div>
+            <.modal-footer>
+                <button class="btn-cancel" data-modal="confirmModal">Annuler</button>
+                <button class="btn-save" id="confirmDeleteBtn">Supprimer</button>
+            </div>
+        </div>
+    </div>
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+    
+    <script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+[
+  {
+    "id": 1672531200000,
+    "name": "John bossou",
+    "email": "john.Bossou@example.com",
+    "phone": "123-456-7890",
+    "date": "samedi 1 janvier 2023",
+    "time": "10:00",
+    "service": "conseil",
+    "message": "ce est un test de rendez-vous .",
+    "status": "En attente"
+  },
+    {
+        "id": 1672617600000,
+        "name": "Jane danssou",
+        "email": "jane.smitdanssouh@example.com",
+        "phone": "098-765-4321",
+        "date": "dimanche 2 janvier 2023",
+        "time": "14:00",
+        "service": "consultation",
+        "message": "je veux enregistrer une consultation.",
+        "status": "En attente"
+    },
+    {
+        "id": 1672704000000,
+        "name": "Alice kouro",
+        "email": "alice.kouro@example.com",
+        "phone": "555-123-4567",
+        "date": "lundi 3 janvier 2023",
+        "time": "11:00",
+        "service": "conseil",
+        "message": "je veux enregistrer une consultation.",
+        "status": "En attente"
+    }
+]

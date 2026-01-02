@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "title": "Fusion-acquisition internationale",
+        "description": "Accompagnement d'une entreprise béninoise dans l'acquisition d'une société française.",
+        "category": "Droit des affaires",
+        "result": "Gagné",
+        "amount": "2M€",
+        "duration": "6 mois",
+        "outcome": "Acquisition réussie avec optimisation fiscale"
+    },
+    {
+        "id": 2,
+        "title": "Contentieux immobilier complexe",
+        "description": "Résolution d'un litige foncier impliquant plusieurs parties sur une durée de 10 ans.",
+        "category": "Droit immobilier",
+        "result": "Gagné",
+        "amount": "450M FCFA",
+        "duration": "8 mois",
+        "outcome": "Transaction avant jugement favorable"
+    }
+]

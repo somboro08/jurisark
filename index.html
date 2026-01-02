@@ -1,0 +1,3037 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juris Ark - Cabinet de Conseil Juridique | Cotonou, Bénin</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amarna:ital,wght@0,100..700;1,100..700&family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- FullCalendar (pour les rendez-vous) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
+    
+    <!-- Supabase client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        /* ===== VARIABLES & RESET ===== */
+        :root {
+            /* Couleurs */
+            --primary: #1a3a5f;
+            --secondary: #c9a96e;
+            --accent: #2c5aa0;
+            --light: #f8f9fa;
+            --dark: #2c3e50;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            
+            /* Polices */
+            --font-heading: "Libertinus Serif", serif;
+            --font-body: "Mulish", sans-serif;
+            --font-accent: "EB Garamond", serif;
+            --font-special: "Amarna", serif;
+            --font-code: "Bricolage Grotesque", monospace;
+            
+            /* Espacements */
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 2rem;
+            --spacing-lg: 3rem;
+            --spacing-xl: 5rem;
+            
+            /* Bordures */
+            --border-radius: 8px;
+            --border-radius-lg: 15px;
+            --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            --box-shadow-lg: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 80px;
+        }
+        
+        body {
+            font-family: var(--font-body);
+            color: var(--dark);
+            line-height: 1.7;
+            background-color: #fff;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-heading);
+            font-weight: 600;
+            color: var(--primary);
+            line-height: 1.3;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+        }
+        
+        h2 {
+            font-size: 2.8rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h2:after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 4px;
+            background: var(--secondary);
+            bottom: -12px;
+            left: 0;
+            border-radius: 2px;
+        }
+        
+        h2.center:after {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        h3 {
+            font-size: 1.8rem;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .section-title h2 {
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .section-title p {
+            font-size: 1.2rem;
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        /* ===== COMPOSANTS COMMUNS ===== */
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+        
+        .btn {
+            display: inline-block;
+            background: var(--secondary);
+            color: white;
+            padding: 12px 32px;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 600;
+            font-family: var(--font-body);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .btn:hover {
+            background: #b89446;
+            transform: translateY(-3px);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .btn-secondary {
+            background: var(--primary);
+        }
+        
+        .btn-secondary:hover {
+            background: #0f2a4a;
+        }
+        
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: var(--spacing-md);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--box-shadow-lg);
+        }
+        
+        /* ===== HEADER & NAVIGATION ===== */
+        header {
+            background: white;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .logo-icon {
+            color: var(--secondary);
+            font-size: 2.5rem;
+        }
+        
+        .logo-text h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0;
+            color: var(--primary);
+        }
+        
+        .logo-text p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: var(--spacing-md);
+        }
+        
+        nav a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 600;
+            font-family: var(--font-body);
+            transition: color 0.3s;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+        
+        nav a:hover {
+            color: var(--secondary);
+        }
+        
+        nav a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background: var(--secondary);
+            left: 0;
+            bottom: 0;
+            transition: width 0.3s;
+        }
+        
+        nav a:hover:after {
+            width: 100%;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary);
+            cursor: pointer;
+        }
+        
+        /* ===== HERO SECTION ===== */
+        .hero {
+            background: linear-gradient(rgba(26, 58, 95, 0.9), rgba(26, 58, 95, 0.95)), 
+                        url('https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 12rem 0 8rem;
+            margin-top: 80px;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            color: white;
+            font-size: 4rem;
+            margin-bottom: var(--spacing-md);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-family: var(--font-accent);
+            font-weight: 700;
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 800px;
+            margin: 0 auto var(--spacing-lg);
+            opacity: 0.9;
+        }
+        
+        /* ===== SECTION ÉQUIPE ===== */
+        #team {
+            padding: var(--spacing-xl) 0;
+            background: var(--light);
+        }
+        
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+        }
+        
+        .team-member {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: all 0.3s ease;
+        }
+        
+        .team-member:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--box-shadow-lg);
+        }
+        
+        .member-img {
+            position: relative;
+            height: 280px;
+            overflow: hidden;
+        }
+        
+        .member-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .team-member:hover .member-img img {
+            transform: scale(1.05);
+        }
+        
+        .member-social {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+        
+        .team-member:hover .member-social {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .member-social a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--secondary);
+            color: white;
+            border-radius: 50%;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .member-social a:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .member-info {
+            padding: var(--spacing-md);
+        }
+        
+        .member-info h3 {
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+        
+        .member-title {
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: var(--spacing-sm);
+            font-size: 0.95rem;
+        }
+        
+        .member-bio {
+            color: var(--gray);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        /* ===== SECTION BLOG ===== */
+        #blog {
+            padding: var(--spacing-xl) 0;
+        }
+        
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+        }
+        
+        .blog-post {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: all 0.3s ease;
+        }
+        
+        .blog-post:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--box-shadow-lg);
+        }
+        
+        .post-image {
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .post-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .blog-post:hover .post-image img {
+            transform: scale(1.05);
+        }
+        
+        .post-content {
+            padding: var(--spacing-md);
+        }
+        
+        .post-meta {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-sm);
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        
+        .post-category {
+            background: var(--light);
+            color: var(--primary);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .post-content h3 {
+            margin-bottom: var(--spacing-sm);
+            font-size: 1.5rem;
+        }
+        
+        .post-content h3 a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .post-content h3 a:hover {
+            color: var(--secondary);
+        }
+        
+        .post-excerpt {
+            color: var(--gray);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .read-more {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: gap 0.3s;
+        }
+        
+        .read-more:hover {
+            gap: 10px;
+        }
+        
+        /* ===== SECTION FAQ ===== */
+        #faq {
+            padding: var(--spacing-xl) 0;
+            background: var(--light);
+        }
+        
+        .faq-container {
+            max-width: 900px;
+            margin: var(--spacing-lg) auto 0;
+        }
+        
+        .faq-item {
+            background: white;
+            border-radius: var(--border-radius);
+            margin-bottom: var(--spacing-sm);
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .faq-question {
+            width: 100%;
+            padding: var(--spacing-md);
+            background: white;
+            border: none;
+            text-align: left;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--primary);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+        
+        .faq-question:hover {
+            background: var(--light);
+        }
+        
+        .faq-question i {
+            transition: transform 0.3s;
+        }
+        
+        .faq-question.active i {
+            transform: rotate(180deg);
+        }
+        
+        .faq-answer {
+            padding: 0 var(--spacing-md);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+        
+        .faq-answer.open {
+            padding: var(--spacing-md);
+            max-height: 500px;
+        }
+        
+        /* ===== SECTION TÉMOIGNAGES ===== */
+        #testimonials {
+            padding: var(--spacing-xl) 0;
+        }
+        
+        .testimonials-slider {
+            max-width: 1000px;
+            margin: var(--spacing-lg) auto 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .testimonial-track {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+        
+        .testimonial-card {
+            min-width: 100%;
+            padding: var(--spacing-lg);
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .testimonial-content {
+            font-size: 1.1rem;
+            font-style: italic;
+            color: var(--dark);
+            margin-bottom: var(--spacing-md);
+            position: relative;
+            padding-left: var(--spacing-md);
+        }
+        
+        .testimonial-content:before {
+            content: '"';
+            font-size: 4rem;
+            color: var(--secondary);
+            opacity: 0.2;
+            position: absolute;
+            left: -10px;
+            top: -20px;
+            font-family: var(--font-accent);
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .testimonial-author img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--light);
+        }
+        
+        .testimonial-author h4 {
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+        
+        .testimonial-author p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .testimonial-nav {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-md);
+        }
+        
+        .testimonial-nav button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: none;
+            background: var(--light-gray);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .testimonial-nav button.active {
+            background: var(--secondary);
+            transform: scale(1.2);
+        }
+        
+        /* ===== SYSTÈME DE RENDEZ-VOUS ===== */
+        #appointment {
+            padding: var(--spacing-xl) 0;
+            background: var(--light);
+        }
+        
+        .appointment-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-xl);
+            align-items: start;
+        }
+        
+        .calendar-container {
+            background: white;
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        #calendar {
+            margin-top: var(--spacing-sm);
+        }
+        
+        .fc .fc-toolbar-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+            font-family: var(--font-heading);
+        }
+        
+        .fc .fc-button {
+            background: var(--primary);
+            border: none;
+        }
+        
+        .fc .fc-button:hover {
+            background: #0f2a4a;
+        }
+        
+        .fc .fc-daygrid-day.fc-day-today {
+            background: rgba(201, 169, 110, 0.1);
+        }
+        
+        .fc .fc-event {
+            background: var(--secondary);
+            border: none;
+        }
+        
+        .appointment-form {
+            background: white;
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .appointment-form h3 {
+            margin-bottom: var(--spacing-md);
+            color: var(--primary);
+        }
+        
+        .form-group {
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--secondary);
+            outline: none;
+        }
+        
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: var(--spacing-sm);
+        }
+        
+        .time-slot {
+            padding: 10px;
+            text-align: center;
+            background: var(--light);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+        
+        .time-slot:hover {
+            background: #e8f4ff;
+        }
+        
+        .time-slot.selected {
+            background: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+        
+        /* ===== CALCULATEURS JURIDIQUES ===== */
+        #calculators {
+            padding: var(--spacing-xl) 0;
+        }
+        
+        .calculators-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+        }
+        
+        .calculator {
+            background: white;
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .calculator h3 {
+            color: var(--primary);
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .calculator h3 i {
+            color: var(--secondary);
+        }
+        
+        .calculator-input {
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .calculator-input label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .calculator-input input,
+        .calculator-input select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius);
+            font-family: var(--font-body);
+        }
+        
+        .calculator-result {
+            background: var(--light);
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius);
+            margin-top: var(--spacing-md);
+            display: none;
+        }
+        
+        .calculator-result.show {
+            display: block;
+        }
+        
+        .result-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin: var(--spacing-sm) 0;
+        }
+        
+        .result-details {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        /* ===== CARTE INTERACTIVE ===== */
+        #jurisdictions {
+            padding: var(--spacing-xl) 0;
+            background: var(--light);
+        }
+        
+        .jurisdiction-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-xl);
+            margin-top: var(--spacing-lg);
+        }
+        
+        .map-container {
+            background: white;
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            position: relative;
+        }
+        
+        .benin-map {
+            width: 100%;
+            height: 400px;
+            background: #f0f7ff;
+            border-radius: var(--border-radius);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .city-dot {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: var(--secondary);
+            border-radius: 50%;
+            cursor: pointer;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s;
+            z-index: 10;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px var(--secondary);
+        }
+        
+        .city-dot:hover {
+            transform: translate(-50%, -50%) scale(1.3);
+            box-shadow: 0 0 0 3px var(--secondary);
+        }
+        
+        .city-dot.active {
+            background: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary);
+        }
+        
+        .city-dot:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 10px solid var(--secondary);
+            bottom: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .city-dot.active:after {
+            opacity: 1;
+        }
+        
+        .tooltip {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 10px 15px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 100;
+            border: 1px solid var(--light-gray);
+        }
+        
+        .city-dot:hover .tooltip {
+            opacity: 1;
+        }
+        
+        .jurisdiction-info {
+            background: white;
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .jurisdiction-list {
+            margin-top: var(--spacing-md);
+        }
+        
+        .jurisdiction-list li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: var(--border-radius);
+            transition: background 0.3s;
+        }
+        
+        .jurisdiction-list li:hover {
+            background: var(--light);
+        }
+        
+        .jurisdiction-list i {
+            color: var(--secondary);
+        }
+        
+        /* ===== SECTION SUCCÈS D'AFFAIRES ===== */
+        #case-studies {
+            padding: var(--spacing-xl) 0;
+        }
+        
+        .case-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+        }
+        
+        .case-card {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: all 0.3s ease;
+        }
+        
+        .case-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--box-shadow-lg);
+        }
+        
+        .case-header {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--spacing-md);
+            background: var(--light);
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .case-category {
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .case-result {
+            background: var(--success);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .case-card .case-result.lost {
+            background: var(--danger);
+        }
+        
+        .case-content {
+            padding: var(--spacing-md);
+        }
+        
+        .case-content h3 {
+            margin-bottom: var(--spacing-sm);
+            color: var(--primary);
+        }
+        
+        .case-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-md);
+            padding-top: var(--spacing-md);
+            border-top: 1px solid var(--light-gray);
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat .number {
+            display: block;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+        
+        .stat .label {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        
+        /* ===== CHAT EN DIRECT ===== */
+        .chat-widget {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+        
+        .chat-toggle {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-family: var(--font-body);
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(201, 169, 110, 0.3);
+            transition: all 0.3s;
+        }
+        
+        .chat-toggle:hover {
+            background: #b89446;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(201, 169, 110, 0.4);
+        }
+        
+        .chat-container {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            width: 350px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow-lg);
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            pointer-events: none;
+        }
+        
+        .chat-container.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: all;
+        }
+        
+        .chat-header {
+            background: var(--primary);
+            color: white;
+            padding: var(--spacing-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-header h4 {
+            color: white;
+            margin: 0;
+        }
+        
+        .chat-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        
+        .chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            padding: var(--spacing-md);
+        }
+        
+        .message {
+            margin-bottom: var(--spacing-sm);
+            padding: 10px 15px;
+            border-radius: var(--border-radius);
+            max-width: 80%;
+        }
+        
+        .message.user {
+            background: var(--light);
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .message.bot {
+            background: var(--primary);
+            color: white;
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: var(--spacing-md);
+            border-top: 1px solid var(--light-gray);
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius);
+            font-family: var(--font-body);
+        }
+        
+        .chat-input button {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            width: 45px;
+            border-radius: var(--border-radius);
+            margin-left: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .chat-input button:hover {
+            background: #b89446;
+        }
+        
+        /* ===== GLOSSAIRE ===== */
+        #glossary {
+            padding: var(--spacing-xl) 0;
+            background: var(--light);
+        }
+        
+        .search-glossary {
+            max-width: 500px;
+            margin: var(--spacing-lg) auto;
+        }
+        
+        .search-glossary input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 1px solid var(--light-gray);
+            border-radius: 50px;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .search-glossary input:focus {
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.2);
+        }
+        
+        .glossary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+        }
+        
+        .term-card {
+            background: white;
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            transition: all 0.3s;
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .term-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .term-card h3 {
+            color: var(--primary);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .term-card p {
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+        
+        /* ===== AGENDA & DÉLAIS ===== */
+        .deadline-widget {
+            position: fixed;
+            top: 150px;
+            right: 30px;
+            width: 300px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow-lg);
+            overflow: hidden;
+            z-index: 999;
+        }
+        
+        .deadline-header {
+            background: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .deadline-header h3 {
+            color: white;
+            margin: 0;
+            font-size: 1.2rem;
+        }
+        
+        .deadline-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 0;
+        }
+        
+        .deadline-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--light-gray);
+            transition: background 0.3s;
+        }
+        
+        .deadline-item:hover {
+            background: var(--light);
+        }
+        
+        .deadline-item.urgent {
+            background: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid var(--warning);
+        }
+        
+        .deadline-date {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+        
+        .deadline-desc {
+            color: var(--dark);
+            font-size: 0.9rem;
+        }
+        
+        /* ===== NEWSLETTER ===== */
+        .newsletter {
+            background: var(--primary);
+            color: white;
+            padding: var(--spacing-xl) 0;
+            text-align: center;
+        }
+        
+        .newsletter-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .newsletter h2 {
+            color: white;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .newsletter p {
+            opacity: 0.9;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .newsletter-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .newsletter-form input,
+        .newsletter-form select {
+            padding: 12px 15px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-family: var(--font-body);
+            min-width: 200px;
+        }
+        
+        /* ===== STATISTIQUES ===== */
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+            padding: var(--spacing-xl) 0;
+            text-align: center;
+        }
+        
+        .stat-item {
+            padding: var(--spacing-lg);
+        }
+        
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--secondary);
+            display: block;
+            font-family: var(--font-accent);
+        }
+        
+        .stat-label {
+            color: var(--gray);
+            font-size: 1.1rem;
+            margin-top: var(--spacing-sm);
+        }
+        
+        /* ===== PARTENAIRES ===== */
+        #partners {
+            padding: var(--spacing-xl) 0;
+            background: var(--light);
+        }
+        
+        .partners-logos {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: var(--spacing-xl);
+            margin-top: var(--spacing-lg);
+        }
+        
+        .partners-logos img {
+            height: 80px;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+            filter: grayscale(100%);
+        }
+        
+        .partners-logos img:hover {
+            opacity: 1;
+            filter: grayscale(0%);
+        }
+        
+        /* ===== FOOTER ===== */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: var(--spacing-xl) 0 var(--spacing-md);
+        }
+        
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .footer-column h3 {
+            color: white;
+            margin-bottom: var(--spacing-md);
+            font-size: 1.3rem;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-column a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-column a:hover {
+            color: var(--secondary);
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-icons a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+        
+        .social-icons a:hover {
+            background: var(--secondary);
+            transform: translateY(-5px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: var(--spacing-md);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1200px) {
+            h1 { font-size: 3rem; }
+            h2 { font-size: 2.5rem; }
+            .hero h1 { font-size: 3.5rem; }
+        }
+        
+        @media (max-width: 992px) {
+            .appointment-container,
+            .jurisdiction-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .deadline-widget {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+            
+            .hero {
+                padding: 8rem 0 5rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+            
+            .header-container {
+                flex-direction: column;
+                gap: var(--spacing-md);
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            nav {
+                width: 100%;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.5s ease;
+            }
+            
+            nav.active {
+                max-height: 300px;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                text-align: center;
+                gap: var(--spacing-sm);
+                margin-top: var(--spacing-sm);
+            }
+            
+            .chat-container {
+                width: 300px;
+                right: -20px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .team-grid,
+            .blog-grid,
+            .calculators-grid,
+            .case-grid,
+            .glossary-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .newsletter-form {
+                flex-direction: column;
+            }
+            
+            .newsletter-form input,
+            .newsletter-form select {
+                width: 100%;
+            }
+            
+            .chat-widget {
+                bottom: 20px;
+                right: 20px;
+            }
+            
+            .chat-toggle {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .chat-container {
+                width: 280px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ===== HEADER ===== -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-balance-scale"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>JURISARK</h1>
+                    <p>CABINET JURIDIQUE ET FISCAL</p>
+                </div>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <nav id="mainNav">
+                <ul>
+                    <li><a href="#home">Accueil</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#formations">Formations</a></li>
+                    <li><a href="#team">Équipe</a></li>
+                    <li><a href="#blog">Actualités</a></li>
+                    <li><a href="#appointment">Rendez-vous</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ===== HERO SECTION ===== -->
+    <section class="hero" id="home">
+        <div class="container">
+            <h1>L’expertise du droit au service de votre tranquillité</h1>
+            <p>JURISARK est votre partenaire de confiance pour toutes vos questions juridiques et fiscales. Nous mettons notre expertise à votre service pour assurer votre tranquillité d'esprit.</p>
+            <div style="display: flex; gap: 20px; justify-content: center; margin-top: 40px;">
+                <a href="#appointment" class="btn">Prendre Rendez-vous</a>
+                <a href="#services" class="btn btn-secondary">Nos Services</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== NOUVELLE SECTION SERVICES ===== -->
+    <section id="services" class="services-section" style="padding: var(--spacing-xl) 0;">
+        <div class="container">
+            <div class="section-title">
+                <h2 class="center">Nos Services et Domaines d'Expertise</h2>
+                <p>Découvrez l'étendue de nos compétences juridiques et fiscales, adaptées à vos besoins spécifiques.</p>
+            </div>
+
+            <div class="services-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-lg); margin-top: var(--spacing-lg);">
+                <div class="service-category card">
+                    <h3><i class="fas fa-gavel"></i> Activités Phares</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 10px; display: flex; align-items: center;"><i class="fas fa-check-circle" style="color: var(--secondary); margin-right: 10px;"></i> Recouvrement de Créances</li>
+                        <li style="margin-bottom: 10px; display: flex; align-items: center;"><i class="fas fa-check-circle" style="color: var(--secondary); margin-right: 10px;"></i> Expertise Juridique (Audit, Conseil, Assistance)</li>
+                        <li style="margin-bottom: 10px; display: flex; align-items: center;"><i class="fas fa-check-circle" style="color: var(--secondary); margin-right: 10px;"></i> Gestion de Patrimoine</li>
+                        <li style="margin-bottom: 10px; display: flex; align-items: center;"><i class="fas fa-check-circle" style="color: var(--secondary); margin-right: 10px;"></i> Mise en Place des Sûretés</li>
+                    </ul>
+                </div>
+                <div class="service-category card">
+                    <h3><i class="fas fa-file-contract"></i> Prestations Complètes</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 10px; display: flex; align-items: center;"><i class="fas fa-check-circle" style="color: var(--secondary); margin-right: 10px;"></i> Ingénierie Juridique et Fiscale</li>
+                        <li style="margin-bottom: 10px; display: flex; align-items: center;"><i class="fas fa-check-circle" style="color: var(--secondary); margin-right: 10px;"></i> Rédaction de Contrats (simples et complexes)</li>
+                        <li style="margin-bottom: 10px; display: flex; align-items: center;"><i class="fas fa-check-circle" style="color: var(--secondary); margin-right: 10px;"></i> Formalisation de Garanties et Sûretés</li>
+                        <li style="margin-bottom: 10px; display: flex; align-items: center;"><i class="fas fa-check-circle" style="color: var(--secondary); margin-right: 10px;"></i> Montage et Structuration de Projets</li>
+                        <li style="margin-bottom: 10px; display: flex; align-items: center;"><i class="fas fa-check-circle" style="color: var(--secondary); margin-right: 10px;"></i> Activités Immobilières (achats, ventes, formalisation de parcelles)</li>
+                        <li style="margin-bottom: 10px; display: flex; align-items: center;"><i class="fas fa-check-circle" style="color: var(--secondary); margin-right: 10px;"></i> Formations et Certifications (programmes de certification professionnelle)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION FORMATIONS & CERTIFICATIONS ===== -->
+    <section id="formations" class="formations-section" style="padding: var(--spacing-xl) 0; background: var(--light);">
+        <div class="container">
+            <div class="section-title">
+                <h2 class="center">Formations & Certifications</h2>
+                <p>Renforcez vos compétences avec nos programmes de certification destinés aux professionnels et aux particuliers.</p>
+            </div>
+
+            <div class="formations-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-lg); margin-top: var(--spacing-lg);">
+                
+                <div class="formation-card card">
+                    <div class="card-icon" style="font-size: 2.5rem; color: var(--secondary); margin-bottom: var(--spacing-sm);"><i class="fas fa-briefcase"></i></div>
+                    <h3>Droit Fiscal des Entreprises</h3>
+                    <p>Maîtrisez les aspects fiscaux de la gestion d'entreprise, de la déclaration à l'optimisation.</p>
+                </div>
+
+                <div class="formation-card card">
+                    <div class="card-icon" style="font-size: 2.5rem; color: var(--secondary); margin-bottom: var(--spacing-sm);"><i class="fas fa-users-cog"></i></div>
+                    <h3>Gestion de la Paie et Droit Social</h3>
+                    <p>Apprenez à gérer la paie et à vous conformer aux réglementations du droit du travail.</p>
+                </div>
+
+                <div class="formation-card card">
+                    <div class="card-icon" style="font-size: 2.5rem; color: var(--secondary); margin-bottom: var(--spacing-sm);"><i class="fas fa-handshake"></i></div>
+                    <h3>Contrats et Négociations Commerciales</h3>
+                    <p>Développez vos compétences en rédaction et négociation de contrats commerciaux.</p>
+                </div>
+
+                <div class="formation-card card">
+                    <div class="card-icon" style="font-size: 2.5rem; color: var(--secondary); margin-bottom: var(--spacing-sm);"><i class="fas fa-building"></i></div>
+                    <h3>Droit Immobilier et de la Construction</h3>
+                    <p>Comprenez les aspects juridiques des transactions immobilières et des projets de construction.</p>
+                </div>
+
+                <div class="formation-card card">
+                    <div class="card-icon" style="font-size: 2.5rem; color: var(--secondary); margin-bottom: var(--spacing-sm);"><i class="fas fa-shield-alt"></i></div>
+                    <h3>Prévention des Risques Juridiques</h3>
+                    <p>Identifiez et anticipez les risques juridiques pour protéger votre entreprise.</p>
+                </div>
+
+                <div class="formation-card card">
+                    <div class="card-icon" style="font-size: 2.5rem; color: var(--secondary); margin-bottom: var(--spacing-sm);"><i class="fas fa-money-check-alt"></i></div>
+                    <h3>Recouvrement de Créances : Stratégies et Bonnes Pratiques</h3>
+                    <p>Découvrez des méthodes efficaces et légales pour le recouvrement de vos créances.</p>
+                </div>
+
+            </div>
+
+            <div style="text-align: center; margin-top: var(--spacing-xl);">
+                <a href="#contact" class="btn">Demander plus d'informations</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== STATISTIQUES ===== -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stat-item">
+                <span class="stat-number" id="stat1">0</span>
+                <span class="stat-label">Clients Satisfaits</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="stat2">0</span>
+                <span class="stat-label">% de Succès</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="stat3">0</span>
+                <span class="stat-label">Ans d'Expérience</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="stat4">0</span>
+                <span class="stat-label">Dossiers Traités</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION ÉQUIPE ===== -->
+    <section id="team">
+        <div class="container">
+            <div class="section-title">
+                <h2 class="center">Notre Équipe d'Experts</h2>
+                <p>Rencontrez nos avocats et consultants dédiés à la réussite de vos projets juridiques</p>
+            </div>
+            
+            <div class="team-grid" id="teamContainer">
+                <!-- Les membres d'équipe seront générés par JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION BLOG ===== -->
+    <section id="blog">
+        <div class="container">
+            <div class="section-title">
+                <h2 class="center">Actualités Juridiques</h2>
+                <p>Restez informé des dernières évolutions législatives et jurisprudentielles</p>
+            </div>
+            
+            <div class="blog-grid" id="blogContainer">
+                <!-- Les articles de blog seront générés par JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION FAQ ===== -->
+    <section id="faq">
+        <div class="container">
+            <div class="section-title">
+                <h2 class="center">Questions Fréquentes</h2>
+                <p>Retrouvez les réponses aux questions les plus courantes sur nos services</p>
+            </div>
+            
+            <div class="faq-container" id="faqContainer">
+                <!-- Les questions FAQ seront générées par JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION TÉMOIGNAGES ===== -->
+    <section id="testimonials">
+        <div class="container">
+            <div class="section-title">
+                <h2 class="center">Témoignages Clients</h2>
+                <p>Ce que nos clients disent de notre expertise et de notre accompagnement</p>
+            </div>
+            
+            <div class="testimonials-slider">
+                <div class="testimonial-track" id="testimonialTrack">
+                    <!-- Les témoignages seront générés par JavaScript -->
+                </div>
+                <div class="testimonial-nav" id="testimonialNav">
+                    <!-- La navigation sera générée par JavaScript -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION RENDEZ-VOUS ===== -->
+    <section id="appointment">
+        <div class="container">
+            <div class="section-title">
+                <h2 class="center">Prendre Rendez-vous</h2>
+                <p>Planifiez une consultation avec nos experts en quelques clics</p>
+            </div>
+            
+            <div class="appointment-container">
+                <div class="calendar-container">
+                    <h3>Calendrier des Disponibilités</h3>
+                    <div id="calendar"></div>
+                </div>
+                
+                <div class="appointment-form">
+                    <h3>Formulaire de Rendez-vous</h3>
+                    <form id="appointmentForm">
+                        <div class="form-group">
+                            <label for="appointmentName">Nom complet *</label>
+                            <input type="text" id="appointmentName" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="appointmentEmail">Email *</label>
+                            <input type="email" id="appointmentEmail" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="appointmentPhone">Téléphone *</label>
+                            <input type="tel" id="appointmentPhone" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="dateInput">Date sélectionnée *</label>
+                            <input type="text" id="dateInput" readonly required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Heure *</label>
+                            <div class="time-slots" id="timeSlots">
+                                <!-- Les créneaux horaires seront générés par JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="appointmentService">Service concerné *</label>
+                            <select id="appointmentService" required>
+                                <option value="">Sélectionnez un service</option>
+                                <option value="conseil">Conseil juridique et fiscal</option>
+                                <option value="recouvrement">Recouvrement des créances</option>
+                                <option value="audit">Audit et expertise juridique</option>
+                                <option value="formation">Formation</option>
+                                <option value="immobilier">Activités immobilières</option>
+                                <option value="recherche">Étude et Recherche juridique</option>
+                                <option value="patrimoine">Gestion du patrimoine</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="appointmentMessage">Message (optionnel)</label>
+                            <textarea id="appointmentMessage" rows="4"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn" style="width: 100%;">Confirmer le Rendez-vous</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION CALCULATEURS ===== -->
+    <section id="calculators">
+        <div class="container">
+            <div class="section-title">
+                <h2 class="center">Calculateurs Juridiques</h2>
+                <p>Estimez vos coûts et délais avec nos outils interactifs</p>
+            </div>
+            
+            <div class="calculators-grid">
+                <div class="calculator">
+                    <h3><i class="fas fa-calculator"></i> Calculateur d'Honoraires</h3>
+                    
+                    <div class="calculator-input">
+                        <label for="caseType">Type de dossier</label>
+                        <select id="caseType">
+                            <option value="simple">Dossier simple</option>
+                            <option value="medium">Dossier moyen</option>
+                            <option value="complex">Dossier complexe</option>
+                            <option value="very-complex">Très complexe</option>
+                        </select>
+                    </div>
+                    
+                    <div class="calculator-input">
+                        <label for="hoursEstimated">Heures estimées</label>
+                        <input type="range" id="hoursEstimated" min="5" max="100" value="20">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--gray); margin-top: 5px;">
+                            <span>5h</span>
+                            <span id="hoursValue">20h</span>
+                            <span>100h</span>
+                        </div>
+                    </div>
+                    
+                    <button class="btn" onclick="calculateFees()" style="width: 100%; margin-top: 20px;">Calculer les honoraires</button>
+                    
+                    <div class="calculator-result" id="feeResult">
+                        <h4>Estimation des honoraires</h4>
+                        <div class="result-value" id="feeValue">0 FCFA</div>
+                        <div class="result-details" id="feeDetails">Cette estimation inclut les frais de dossier et la TVA applicable.</div>
+                    </div>
+                </div>
+                
+                <div class="calculator">
+                    <h3><i class="fas fa-calendar-alt"></i> Échéancier de Procédure</h3>
+                    
+                    <div class="calculator-input">
+                        <label for="procedureType">Type de procédure</label>
+                        <select id="procedureType">
+                            <option value="commercial">Droit commercial</option>
+                            <option value="civil">Droit civil</option>
+                            <option value="penal">Droit pénal</option>
+                            <option value="immobilier">Droit immobilier</option>
+                            <option value="travail">Droit du travail</option>
+                        </select>
+                    </div>
+                    
+                    <div class="calculator-input">
+                        <label for="startDate">Date de début</label>
+                        <input type="date" id="startDate">
+                    </div>
+                    
+                    <button class="btn" onclick="calculateTimeline()" style="width: 100%; margin-top: 20px;">Estimer l'échéancier</button>
+                    
+                    <div class="calculator-result" id="timelineResult">
+                        <h4>Échéancier estimé</h4>
+                        <div class="result-value" id="timelineValue">0 jours</div>
+                        <div class="result-details" id="timelineDetails">
+                            <div><strong>Prochaine échéance:</strong> <span id="nextDeadline">-</span></div>
+                            <div><strong>Date estimée de fin:</strong> <span id="endDate">-</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION CARTE INTERACTIVE ===== -->
+    <section id="jurisdictions">
+        <div class="container">
+            <div class="section-title">
+                <h2 class="center">Zones d'Intervention</h2>
+                <p>Nous intervenons dans toutes les juridictions du Bénin et à l'international</p>
+            </div>
+            
+            <div class="jurisdiction-container">
+                <div class="map-container">
+                    <h3>Carte des Interventions au Bénin</h3>
+                    <div class="benin-map" id="beninMap">
+                        <!-- Les points de la carte seront générés par JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="jurisdiction-info">
+                    <h3>Juridictions Couvertes</h3>
+                    <p>Notre cabinet intervient devant toutes les juridictions béninoises et dans le cadre d'arbitrages internationaux.</p>
+                    
+                    <div class="jurisdiction-list">
+                        <ul id="jurisdictionList">
+                            <!-- La liste des juridictions sera générée par JavaScript -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION SUCCÈS D'AFFAIRES ===== -->
+    <section id="case-studies">
+        <div class="container">
+            <div class="section-title">
+                <h2 class="center">Succès d'Affaires</h2>
+                <p>Découvrez une sélection de dossiers que nous avons traités avec succès</p>
+            </div>
+            
+            <div class="case-grid" id="caseStudiesContainer">
+                <!-- Les études de cas seront générées par JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION GLOSSAIRE ===== -->
+    <section id="glossary">
+        <div class="container">
+            <div class="section-title">
+                <h2 class="center">Lexique Juridique</h2>
+                <p>Consultez les définitions des termes juridiques les plus courants</p>
+            </div>
+            
+            <div class="search-glossary">
+                <input type="text" id="glossarySearch" placeholder="Rechercher un terme juridique...">
+            </div>
+            
+            <div class="glossary-grid" id="glossaryContainer">
+                <!-- Les termes du glossaire seront générés par JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION NEWSLETTER ===== -->
+    <section class="newsletter">
+        <div class="container">
+            <div class="newsletter-content">
+                <h2>Newsletter Juridique</h2>
+                <p>Recevez chaque mois nos analyses, les dernières actualités législatives et des conseils pratiques.</p>
+                
+                <form class="newsletter-form" id="newsletterForm">
+                    <input type="email" placeholder="Votre adresse email" required>
+                    <select>
+                        <option value="general">Actualités générales</option>
+                        <option value="business">Droit des affaires</option>
+                        <option value="immobilier">Droit immobilier</option>
+                        <option value="fiscal">Droit fiscal</option>
+                        <option value="international">Droit international</option>
+                    </select>
+                    <button type="submit" class="btn">S'abonner</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION PARTENAIRES ===== -->
+    <section id="partners">
+        <div class="container">
+            <div class="section-title">
+                <h2 class="center">Partenaires & Associations</h2>
+                <p>Nous collaborons avec les principales institutions juridiques et professionnelles</p>
+            </div>
+            
+            <div class="partners-logos" id="partnersLogos">
+                <!-- Les logos des partenaires seront générés par JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== WIDGETS FIXES ===== -->
+    
+    <!-- Widget Chat en Direct -->
+    <div class="chat-widget">
+        <button class="chat-toggle" id="chatToggle">
+            <i class="fas fa-comments"></i> Questions ?
+        </button>
+        <div class="chat-container" id="chatContainer">
+            <div class="chat-header">
+                <h4>Assistance Juris Ark</h4>
+                <button class="chat-close" id="chatClose"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot">
+                    Bonjour ! Je suis l'assistant virtuel de Juris Ark. Comment puis-je vous aider aujourd'hui ?
+                </div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chatInput" placeholder="Posez votre question...">
+                <button id="chatSend"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Widget Agenda des Délais -->
+    <div class="deadline-widget">
+        <div class="deadline-header">
+            <i class="fas fa-calendar-alt"></i>
+            <h3>Délais à Surveiller</h3>
+        </div>
+        <ul class="deadline-list" id="deadlineList">
+            <!-- Les délais seront générés par JavaScript -->
+        </ul>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-column">
+                    <h3>JURIS ARK</h3>
+                    <p>Cabinet de conseil juridique offrant des services professionnels à Cotonou, Bénin. Notre expertise couvre tous les domaines du droit pour particuliers et entreprises.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Services</h3>
+                    <ul>
+                        <li><a href="#services">Nos Services</a></li>
+                        <li><a href="#formations">Nos Formations</a></li>
+                        <li><a href="#appointment">Prendre Rendez-vous</a></li>
+                        <li><a href="#blog">Actualités</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Contact</h3>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> Calavi, Akassato, En face de la Pharmacie Saint Steve, Pavé Kerekou</li>
+                        <li><i class="fas fa-phone"></i> +229 01 405 45 464 / +229 01 922 033 92</li>
+                        <li><i class="fas fa-envelope"></i> jurisark@gmail.com</li>
+                        <li><i class="fas fa-clock"></i> Lun-Ven: 8h-18h</li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Liens Rapides</h3>
+                    <ul>
+                        <li><a href="#home">Accueil</a></li>
+                        <li><a href="#team">Équipe</a></li>
+                        <li><a href="#blog">Actualités</a></li>
+                        <li><a href="#appointment">Rendez-vous</a></li>
+                        <li><a href="#glossary">Lexique juridique</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+        <div class="copyright">
+            &copy; 2026 JURISARK. Tous droits réservés.
+        </div>
+        </div>
+    </footer>
+
+    <!-- ===== SCRIPTS ===== -->
+    <!-- FullCalendar -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/fr.js"></script>
+    
+    <script type="module">
+        // ===== INITIALISATION DE SUPABASE =====
+    // Initialisation correcte de Supabase
+    const supabaseUrl = 'https://qwxyddncwzwjbgsipvau.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF3eHlkZG5jd3p3amJnc2lwdmF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYzOTEyOTUsImV4cCI6MjA4MTk2NzI5NX0.SHs3TfgY-Yr_QGD7SFjYABnCRpLYwE69HAxSyGQEgJ4';
+    const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+        // ===== INITIALISATION =====
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Initialiser les composants
+                    initTeam();
+                    initBlog();
+                    initFAQ();
+                    initTestimonials();
+                    initCalendar();
+                    initJurisdictionMap();
+                    initCaseStudies();
+                    initGlossary();
+                    initDeadlines();
+                    initPartners();
+                    initChat();
+                    initStatsCounter();
+                    
+                    // Initialiser la navigation mobile
+                    initMobileMenu();
+                    
+                    // Initialiser les formulaires
+                    initForms();
+                    
+                    // Initialiser la recherche du glossaire
+                    initGlossarySearch();
+                });
+                
+                // ===== FONCTIONS D'INITIALISATION =====
+                
+                async function initTeam() {
+                    const container = document.getElementById('teamContainer');
+                    container.innerHTML = 'Chargement de l\'équipe...'; // Add a loading indicator
+                    
+                    // Fetch team members from Supabase
+                    const { data: teamMembers, error } = await supabaseClient
+                        .from('team_members') // Corrected table name
+                        .select('*');
+                    
+                    if (error) {
+                        console.error('Error fetching team members:', error.message);
+                        container.innerHTML = '<p>Impossible de charger l\'équipe. Veuillez réessayer plus tard.</p>';
+                        return;
+                    }
+                    
+                    if (!teamMembers || teamMembers.length === 0) {
+                        container.innerHTML = '<p>Aucun membre de l\'équipe trouvé.</p>';
+                        return;
+                    }
+        
+                    container.innerHTML = ''; // Clear loading indicator
+        
+                    teamMembers.forEach(member => {
+                        const memberHTML = `
+                            <div class="team-member">
+                                <div class="member-img">
+                                    <img src="${member.img_url || 'https://via.placeholder.com/500x500.png?text=Photo+Membre'}" alt="${member.name}">
+                                    <div class="member-social">
+                                        ${member.linkedin_url ? `<a href="${member.linkedin_url}" target="_blank"><i class="fab fa-linkedin-in"></i></a>` : ''}
+                                        ${member.email ? `<a href="mailto:${member.email}"><i class="fas fa-envelope"></i></a>` : ''}
+                                        ${member.phone ? `<a href="tel:${member.phone}"><i class="fas fa-phone"></i></a>` : ''}
+                                    </div>
+                                </div>
+                                <div class="member-info">
+                                    <h3>${member.name}</h3>
+                                    <p class="member-title">${member.title}</p>
+                                    <p class="member-bio">${member.bio}</p>
+                                </div>
+                            </div>
+                        `;
+                        container.innerHTML += memberHTML;
+                    });
+                }
+                
+               async function initBlog() {
+    const container = document.getElementById('blogContainer');
+    container.innerHTML = 'Chargement des articles...';
+    
+    try {
+        const { data: blogPosts, error } = await supabaseClient
+            .from('blog_posts')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(3);
+        
+        if (error) throw error;
+        
+        if (!blogPosts || blogPosts.length === 0) {
+            container.innerHTML = '<p>Aucun article à afficher pour le moment.</p>';
+            return;
+        }
+        
+        container.innerHTML = '';
+        
+        blogPosts.forEach(post => {
+            const postHTML = `
+                <article class="blog-post">
+                    <div class="post-image">
+                        <img src="${post.image_url || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-4.0.3&auto=format&fit=crop&w=700&q=80'}" alt="${post.title}">
+                    </div>
+                    <div class="post-content">
+                        <div class="post-meta">
+                            <span class="post-date">${new Date(post.created_at).toLocaleDateString('fr-FR')}</span>
+                            <span class="post-category">${post.category || 'Actualités'}</span>
+                        </div>
+                        <h3><a href="#">${post.title}</a></h3>
+                        <p class="post-excerpt">${post.excerpt || post.content?.substring(0, 150) || 'Article juridique...'}...</p>
+                        <a href="#" class="read-more">Lire la suite <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </article>
+            `;
+            container.innerHTML += postHTML;
+        });
+        
+    } catch (error) {
+        console.error('Erreur lors du chargement des articles:', error);
+        container.innerHTML = '<p>Impossible de charger les articles. Veuillez réessayer plus tard.</p>';
+    }
+}
+        async function initFAQ() {
+            const container = document.getElementById('faqContainer');
+            container.innerHTML = 'Chargement des questions fréquentes...';
+            
+            const { data: faqItems, error } = await supabaseClient
+                .from('faq_items') // Corrected table name
+                .select('*');
+            
+            if (error) {
+                console.error('Error fetching FAQ items:', error.message);
+                container.innerHTML = '<p>Impossible de charger les questions fréquentes. Veuillez réessayer plus tard.</p>';
+                return;
+            }
+
+            if (!faqItems || faqItems.length === 0) {
+                container.innerHTML = '<p>Aucune question fréquente trouvée.</p>';
+                return;
+            }
+
+            container.innerHTML = ''; // Clear loading indicator
+            
+            faqItems.forEach((item, index) => {
+                const faqHTML = `
+                    <div class="faq-item">
+                        <button class="faq-question" data-index="${index}">
+                            ${item.question}
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer" id="faqAnswer${index}">
+                            <p>${item.answer}</p>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += faqHTML;
+            });
+            
+            // Ajouter les événements pour les questions FAQ
+            document.querySelectorAll('.faq-question').forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = this.getAttribute('data-index');
+                    const answer = document.getElementById(`faqAnswer${index}`);
+                    const isOpen = answer.classList.contains('open');
+                    
+                    // Fermer toutes les réponses
+                    document.querySelectorAll('.faq-answer').forEach(ans => {
+                        ans.classList.remove('open');
+                    });
+                    document.querySelectorAll('.faq-question').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    
+                    // Ouvrir la réponse sélectionnée si elle était fermée
+                    if (!isOpen) {
+                        answer.classList.add('open');
+                        this.classList.add('active');
+                    }
+                });
+            });
+        }
+        
+        async function initTestimonials() {
+            const track = document.getElementById('testimonialTrack');
+            const nav = document.getElementById('testimonialNav');
+            let currentSlide = 0;
+
+            track.innerHTML = 'Chargement des témoignages...';
+
+            const { data: testimonials, error } = await supabaseClient
+                .from('testimonials') // Assuming a table named 'testimonials'
+                .select('*');
+
+            if (error) {
+                console.error('Error fetching testimonials:', error.message);
+                track.innerHTML = '<p>Impossible de charger les témoignages. Veuillez réessayer plus tard.</p>';
+                return;
+            }
+
+            if (!testimonials || testimonials.length === 0) {
+                track.innerHTML = '<p>Aucun témoignage trouvé.</p>';
+                return;
+            }
+
+            track.innerHTML = ''; // Clear loading indicator
+            
+            // Créer les slides
+            testimonials.forEach((testimonial, index) => {
+                const slideHTML = `
+                    <div class="testimonial-card" data-index="${index}">
+                        <div class="testimonial-content">
+                            ${testimonial.content}
+                        </div>
+                        <div class="testimonial-author">
+                            <img src="${testimonial.img_url || 'https://via.placeholder.com/100x100.png?text=Photo'}" alt="${testimonial.author}">
+                            <div>
+                                <h4>${testimonial.author}</h4>
+                                <p>${testimonial.position}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                track.innerHTML += slideHTML;
+                
+                // Créer les points de navigation
+                const navButton = document.createElement('button');
+                navButton.setAttribute('data-index', index);
+                if (index === 0) navButton.classList.add('active');
+                navButton.addEventListener('click', function() {
+                    goToSlide(parseInt(this.getAttribute('data-index')));
+                });
+                nav.appendChild(navButton);
+            });
+            
+            // Fonction pour aller à un slide spécifique
+            function goToSlide(index) {
+                currentSlide = index;
+                track.style.transform = `translateX(-${index * 100}%)`;
+                
+                // Mettre à jour la navigation
+                document.querySelectorAll('.testimonial-nav button').forEach((btn, i) => {
+                    if (i === index) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+            }
+            
+            // Défilement automatique
+            setInterval(() => {
+                currentSlide = (currentSlide + 1) % testimonials.length;
+                goToSlide(currentSlide);
+            }, 5000);
+        }
+        
+        function initCalendar() {
+            const calendarEl = document.getElementById('calendar');
+            const dateInput = document.getElementById('dateInput');
+            const timeSlotsContainer = document.getElementById('timeSlots');
+            
+            // Générer les créneaux horaires
+            const timeSlots = ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'];
+            timeSlots.forEach(slot => {
+                const slotElement = document.createElement('div');
+                slotElement.className = 'time-slot';
+                slotElement.textContent = slot;
+                slotElement.addEventListener('click', function() {
+                    // Désélectionner tous les créneaux
+                    document.querySelectorAll('.time-slot').forEach(s => {
+                        s.classList.remove('selected');
+                    });
+                    // Sélectionner ce créneau
+                    this.classList.add('selected');
+                });
+                timeSlotsContainer.appendChild(slotElement);
+            });
+            
+            // Initialiser le calendrier
+            const calendar = new window.FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'fr',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                selectable: true,
+                select: function(info) {
+                    const selectedDate = info.startStr;
+                    dateInput.value = new Date(selectedDate).toLocaleDateString('fr-FR', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                    
+                    // Réinitialiser les créneaux horaires
+                    document.querySelectorAll('.time-slot').forEach(s => {
+                        s.classList.remove('selected');
+                    });
+                },
+                events: [
+                    {
+                        title: 'Consultation',
+                        start: new Date().toISOString().split('T')[0] + 'T10:00:00',
+                        end: new Date().toISOString().split('T')[0] + 'T11:00:00'
+                    },
+                    {
+                        title: 'Réunion client',
+                        start: new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0] + 'T14:00:00',
+                        end: new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0] + 'T15:30:00'
+                    }
+                ]
+            });
+            
+            calendar.render();
+            
+            // Définir la date d'aujourd'hui par défaut
+            dateInput.value = new Date().toLocaleDateString('fr-FR', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+        
+        async function initJurisdictionMap() {
+            const map = document.getElementById('beninMap');
+            const list = document.getElementById('jurisdictionList');
+            map.innerHTML = 'Chargement de la carte...';
+            list.innerHTML = '';
+            
+            const { data: jurisdictions, error } = await supabaseClient
+                .from('jurisdictions') // Assuming a table named 'jurisdictions'
+                .select('*');
+
+            if (error) {
+                console.error('Error fetching jurisdictions:', error.message);
+                map.innerHTML = '<p>Impossible de charger la carte. Veuillez réessayer plus tard.</p>';
+                return;
+            }
+
+            if (!jurisdictions || jurisdictions.length === 0) {
+                map.innerHTML = '<p>Aucune juridiction trouvée.</p>';
+                return;
+            }
+
+            map.innerHTML = ''; // Clear loading indicator
+
+            // Créer les points sur la carte
+            jurisdictions.forEach(jurisdiction => {
+                // Point sur la carte
+                const dot = document.createElement('div');
+                dot.className = 'city-dot';
+                dot.style.left = `${jurisdiction.x}%`;
+                dot.style.top = `${jurisdiction.y}%`;
+                dot.setAttribute('data-city', jurisdiction.name);
+                
+                const tooltip = document.createElement('div');
+                tooltip.className = 'tooltip';
+                tooltip.textContent = jurisdiction.description;
+                dot.appendChild(tooltip);
+                
+                dot.addEventListener('click', function() {
+                    // Désélectionner tous les points
+                    document.querySelectorAll('.city-dot').forEach(d => {
+                        d.classList.remove('active');
+                    });
+                    // Sélectionner ce point
+                    this.classList.add('active');
+                });
+                
+                map.appendChild(dot);
+                
+                // Item dans la liste
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    <i class="fas fa-gavel"></i>
+                    <div>
+                        <strong>${jurisdiction.name}</strong>
+                        <div style="font-size: 0.9rem; color: var(--gray);">${jurisdiction.description}</div>
+                    </div>
+                `;
+                list.appendChild(listItem);
+            });
+        }
+        
+        async function initCaseStudies() {
+            const container = document.getElementById('caseStudiesContainer');
+            container.innerHTML = 'Chargement des études de cas...';
+
+            const { data: caseStudies, error } = await supabaseClient
+                .from('case_studies') // Assuming a table named 'case_studies'
+                .select('*');
+
+            if (error) {
+                console.error('Error fetching case studies:', error.message);
+                container.innerHTML = '<p>Impossible de charger les études de cas. Veuillez réessayer plus tard.</p>';
+                return;
+            }
+
+            if (!caseStudies || caseStudies.length === 0) {
+                container.innerHTML = '<p>Aucune étude de cas trouvée.</p>';
+                return;
+            }
+
+            container.innerHTML = ''; // Clear loading indicator
+
+            caseStudies.forEach(caseStudy => {
+                const caseHTML = `
+                    <div class="case-card">
+                        <div class="case-header">
+                            <span class="case-category">${caseStudy.category}</span>
+                            <span class="case-result">${caseStudy.result}</span>
+                        </div>
+                        <div class="case-content">
+                            <h3>${caseStudy.title}</h3>
+                            <p>${caseStudy.description}</p>
+                            <div class="case-stats">
+                                <div class="stat">
+                                    <span class="number">${caseStudy.amount}</span>
+                                    <span class="label">Montant</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="number">${caseStudy.duration}</span>
+                                    <span class="label">Durée</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += caseHTML;
+            });
+        }
+        
+        async function initGlossary() {
+            const container = document.getElementById('glossaryContainer');
+            container.innerHTML = 'Chargement du lexique...';
+
+            const { data: glossaryTerms, error } = await supabaseClient
+                .from('glossary_terms') // Assuming a table named 'glossary'
+                .select('*');
+
+            if (error) {
+                console.error('Error fetching glossary terms:', error.message);
+                container.innerHTML = '<p>Impossible de charger le lexique. Veuillez réessayer plus tard.</p>';
+                return;
+            }
+
+            if (!glossaryTerms || glossaryTerms.length === 0) {
+                container.innerHTML = '<p>Aucun terme trouvé dans le lexique.</p>';
+                return;
+            }
+
+            container.innerHTML = ''; // Clear loading indicator
+
+            glossaryTerms.forEach(term => {
+                const termHTML = `
+                    <div class="term-card" data-term="${term.term.toLowerCase()}">
+                        <h3>${term.term}</h3>
+                        <p>${term.definition}</p>
+                    </div>
+                `;
+                container.innerHTML += termHTML;
+            });
+        }
+        
+        function initGlossarySearch() {
+            const searchInput = document.getElementById('glossarySearch');
+            
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const termCards = document.querySelectorAll('.term-card');
+                
+                termCards.forEach(card => {
+                    const term = card.getAttribute('data-term');
+                    const isVisible = term.includes(searchTerm) || searchTerm === '';
+                    
+                    card.style.display = isVisible ? 'block' : 'none';
+                    
+                    if (isVisible && searchTerm) {
+                        // Mettre en surbrillance le terme recherché
+                        const termElement = card.querySelector('h3');
+                        const originalTerm = termElement.textContent;
+                        const regex = new RegExp(`(${searchTerm})`, 'gi');
+                        termElement.innerHTML = originalTerm.replace(regex, '<mark>$1</mark>');
+                    }
+                });
+            });
+        }
+        
+        async function initDeadlines() {
+            const list = document.getElementById('deadlineList');
+            list.innerHTML = '<li>Chargement des délais...</li>';
+
+            const { data: deadlines, error } = await supabaseClient
+                .from('deadlines') // Assuming a table named 'deadlines'
+                .select('*')
+                .order('date', { ascending: true });
+
+            if (error) {
+                console.error('Error fetching deadlines:', error.message);
+                list.innerHTML = '<li>Impossible de charger les délais.</li>';
+                return;
+            }
+
+            if (!deadlines || deadlines.length === 0) {
+                list.innerHTML = '<li>Aucun délai à afficher.</li>';
+                return;
+            }
+
+            list.innerHTML = ''; // Clear loading indicator
+
+            deadlines.forEach(deadline => {
+                const item = document.createElement('li');
+                item.className = `deadline-item ${deadline.urgent ? 'urgent' : ''}`;
+                item.innerHTML = `
+                    <div>
+                        <div class="deadline-date">${new Date(deadline.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
+                        <div class="deadline-desc">${deadline.description}</div>
+                    </div>
+                    ${deadline.urgent ? '<i class="fas fa-exclamation-circle" style="color: var(--warning);"></i>' : ''}
+                `;
+                list.appendChild(item);
+            });
+        }
+        
+        async function initPartners() {
+            const container = document.getElementById('partnersLogos');
+            container.innerHTML = 'Chargement des partenaires...';
+
+            const { data: partners, error } = await supabaseClient
+                .from('partners') // Assuming a table named 'partners'
+                .select('*');
+
+            if (error) {
+                console.error('Error fetching partners:', error.message);
+                container.innerHTML = '<p>Impossible de charger les partenaires.</p>';
+                return;
+            }
+
+            if (!partners || partners.length === 0) {
+                container.innerHTML = '<p>Aucun partenaire à afficher.</p>';
+                return;
+            }
+
+            container.innerHTML = ''; // Clear loading indicator
+
+            partners.forEach(partner => {
+                const img = document.createElement('img');
+                img.src = partner.logo_url || 'https://via.placeholder.com/150x80.png?text=Logo+Partenaire';
+                img.alt = partner.name;
+                img.title = partner.name;
+                container.appendChild(img);
+            });
+        }
+        
+        function initChat() {
+            const chatToggle = document.getElementById('chatToggle');
+            const chatContainer = document.getElementById('chatContainer');
+            const chatClose = document.getElementById('chatClose');
+            const chatSend = document.getElementById('chatSend');
+            const chatInput = document.getElementById('chatInput');
+            const chatMessages = document.getElementById('chatMessages');
+            
+            // Réponses prédéfinies du chat
+            const chatResponses = {
+                'honoraires': 'Nos honoraires varient selon la complexité du dossier. Pour une estimation personnalisée, vous pouvez prendre rendez-vous via notre calendrier en ligne.',
+                'rendez-vous': 'Vous pouvez prendre rendez-vous en utilisant notre calendrier interactif dans la section "Rendez-vous" de notre site.',
+                'services': 'Nous proposons 7 services principaux : conseil juridique et fiscal, recouvrement des créances, audit et expertise, formation, activités immobilières, étude et recherche juridique, et gestion du patrimoine.',
+                'contact': 'Vous pouvez nous contacter par téléphone au +229 XX XX XX XX, par email à contact@jurisark.bj, ou prendre rendez-vous en ligne.',
+                'adresse': 'Notre cabinet est situé à Cotonou, au Bénin. Pour plus de précisions sur notre adresse exacte, contactez-nous par téléphone.',
+                'urgence': 'Pour les urgences juridiques en dehors des heures de bureau, veuillez appeler le +229 XX XX XX XX (service du rgence).'
+            };
+            
+            // Ouvrir/fermer le chat
+            chatToggle.addEventListener('click', function() {
+                chatContainer.classList.toggle('active');
+            });
+            
+            chatClose.addEventListener('click', function() {
+                chatContainer.classList.remove('active');
+            });
+            
+            // Envoyer un message
+            function sendMessage() {
+                const message = chatInput.value.trim();
+                if (message === '') return;
+                
+                // Ajouter le message de l'utilisateur
+                const userMessage = document.createElement('div');
+                userMessage.className = 'message user';
+                userMessage.textContent = message;
+                chatMessages.appendChild(userMessage);
+                
+                // Réinitialiser l'input
+                chatInput.value = '';
+                
+                // Faire défiler vers le bas
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Répondre après un court délai
+                setTimeout(() => {
+                    let response = "Je n'ai pas bien compris votre question. Pouvez-vous la reformuler ou consulter notre FAQ ?";
+                    
+                    // Chercher une réponse correspondante
+                    const messageLower = message.toLowerCase();
+                    for (const [key, value] of Object.entries(chatResponses)) {
+                        if (messageLower.includes(key)) {
+                            response = value;
+                            break;
+                        }
+                    }
+                    
+                    // Ajouter la réponse du bot
+                    const botMessage = document.createElement('div');
+                    botMessage.className = 'message bot';
+                    botMessage.textContent = response;
+                    chatMessages.appendChild(botMessage);
+                    
+                    // Faire défiler vers le bas
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 1000);
+            }
+            
+            chatSend.addEventListener('click', sendMessage);
+            
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        }
+        
+        function initStatsCounter() {
+            const stat1 = document.getElementById('stat1');
+            const stat2 = document.getElementById('stat2');
+            const stat3 = document.getElementById('stat3');
+            const stat4 = document.getElementById('stat4');
+            
+            const targetValues = [150, 95, 25, 420];
+            const durations = [2000, 2500, 1800, 3000];
+            
+            function animateCounter(element, target, duration) {
+                let start = 0;
+                const increment = target / (duration / 16); // 16ms par frame
+                const timer = setInterval(() => {
+                    start += increment;
+                    if (start >= target) {
+                        element.textContent = target;
+                        clearInterval(timer);
+                    } else {
+                        element.textContent = Math.floor(start);
+                    }
+                }, 16);
+            }
+            
+            // Démarrer les compteurs quand la section est visible
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateCounter(stat1, targetValues[0], durations[0]);
+                        animateCounter(stat2, targetValues[1], durations[1]);
+                        animateCounter(stat3, targetValues[2], durations[2]);
+                        animateCounter(stat4, targetValues[3], durations[3]);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            observer.observe(document.querySelector('.stats-section'));
+        }
+        
+        function initMobileMenu() {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mainNav = document.getElementById('mainNav');
+            
+            mobileMenuBtn.addEventListener('click', function() {
+                mainNav.classList.toggle('active');
+                const icon = this.querySelector('i');
+                if (icon.classList.contains('fa-bars')) {
+                    icon.classList.replace('fa-bars', 'fa-times');
+                } else {
+                    icon.classList.replace('fa-times', 'fa-bars');
+                }
+            });
+            
+            // Fermer le menu au clic sur un lien
+            document.querySelectorAll('nav a').forEach(link => {
+                link.addEventListener('click', function() {
+                    mainNav.classList.remove('active');
+                    mobileMenuBtn.querySelector('i').classList.replace('fa-times', 'fa-bars');
+                });
+            });
+        }
+        
+        function initForms() {
+            // Formulaire de rendez-vous
+            const appointmentForm = document.getElementById('appointmentForm');
+            appointmentForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Récupérer les valeurs
+                const name = document.getElementById('appointmentName').value;
+                const email = document.getElementById('appointmentEmail').value;
+                const phone = document.getElementById('appointmentPhone').value;
+                const service = document.getElementById('appointmentService').value;
+                const date = document.getElementById('dateInput').value;
+                const message = document.getElementById('appointmentMessage').value;
+
+                // Vérifier si un créneau horaire est sélectionné
+                const selectedTimeSlot = document.querySelector('.time-slot.selected');
+                if (!selectedTimeSlot) {
+                    alert('Veuillez sélectionner un créneau horaire.');
+                    return;
+                }
+                
+                const time = selectedTimeSlot.textContent;
+
+                const { data, error } = await supabaseClient
+                    .from('appointments')
+                    .insert([
+                        { name, email, phone, service, date, time, message },
+                    ]);
+
+                if (error) {
+                    console.error('Error inserting appointment:', error.message);
+                    alert('Une erreur est survenue lors de la prise de rendez-vous. Veuillez réessayer.');
+                    return;
+                }
+                
+                alert(`Merci ${name}! Votre rendez-vous pour une consultation en ${service} est confirmé pour le ${date} à ${time}. Un email de confirmation a été envoyé à ${email}.`);
+                
+                // Réinitialiser le formulaire
+                appointmentForm.reset();
+                document.querySelectorAll('.time-slot').forEach(slot => {
+                    slot.classList.remove('selected');
+                });
+            });
+            
+            // Formulaire de newsletter
+            const newsletterForm = document.getElementById('newsletterForm');
+            newsletterForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const email = this.querySelector('input[type="email"]').value;
+                const category = this.querySelector('select').value;
+
+                const { data, error } = await supabaseClient
+                    .from('newsletter_subscribers')
+                    .insert([
+                        { email, category },
+                    ]);
+
+                if (error) {
+                    console.error('Error inserting newsletter subscriber:', error.message);
+                    alert('Une erreur est survenue lors de l\'inscription à la newsletter. Veuillez réessayer.');
+                    return;
+                }
+
+                alert(`Merci de votre abonnement! Vous recevrez désormais notre newsletter à l'adresse ${email}.`);
+                this.reset();
+            });
+        }
+        
+        // ===== FONCTIONS DES CALCULATEURS =====
+        
+        function calculateFees() {
+            const caseType = document.getElementById('caseType').value;
+            const hours = parseInt(document.getElementById('hoursEstimated').value);
+            
+            // Tarifs par heure selon la complexité
+            const hourlyRates = {
+                'simple': 25000,
+                'medium': 35000,
+                'complex': 50000,
+                'very-complex': 75000
+            };
+            
+            // Calcul des honoraires
+            let baseFee = hours * hourlyRates[caseType];
+            
+            // Frais de dossier
+            let dossierFee = 0;
+            if (caseType === 'simple' || caseType === 'medium') {
+                dossierFee = 50000;
+            } else {
+                dossierFee = 100000;
+            }
+            
+            // TVA (18%)
+            const tva = (baseFee + dossierFee) * 0.18;
+            
+            // Total
+            const totalFee = baseFee + dossierFee + tva;
+            
+            // Afficher le résultat
+            document.getElementById('feeValue').textContent = formatCurrency(totalFee);
+            document.getElementById('feeDetails').innerHTML = `
+                Détails de l'estimation:<br>
+                - Honoraires (${hours}h): ${formatCurrency(baseFee)}<br>
+                - Frais de dossier: ${formatCurrency(dossierFee)}<br>
+                - TVA (18%): ${formatCurrency(tva)}<br>
+                <strong>Total estimé: ${formatCurrency(totalFee)}</strong>
+            `;
+            document.getElementById('feeResult').classList.add('show');
+        }
+        
+        function calculateTimeline() {
+            const procedureType = document.getElementById('procedureType').value;
+            const startDateInput = document.getElementById('startDate');
+            
+            // Définir la date de début (aujourd'hui si non spécifiée)
+            let startDate;
+            if (startDateInput.value) {
+                startDate = new Date(startDateInput.value);
+            } else {
+                startDate = new Date();
+                startDateInput.valueAsDate = startDate;
+            }
+            
+            // Durées estimées selon le type de procédure (en jours)
+            const durations = {
+                'commercial': 180,
+                'civil': 240,
+                'penal': 365,
+                'immobilier': 300,
+                'travail': 120
+            };
+            
+            const durationDays = durations[procedureType];
+            
+            // Calculer la date de fin
+            const endDate = new Date(startDate);
+            endDate.setDate(endDate.getDate() + durationDays);
+            
+            // Dates intermédiaires
+            const milestones = [
+                { days: Math.floor(durationDays * 0.25), label: 'Dépôt initial' },
+                { days: Math.floor(durationDays * 0.5), label: 'Échange de mémoires' },
+                { days: Math.floor(durationDays * 0.75), label: 'Audience' },
+                { days: durationDays, label: 'Décision' }
+            ];
+            
+            // Afficher le résultat
+            document.getElementById('timelineValue').textContent = `${durationDays} jours`;
+            document.getElementById('nextDeadline').textContent = `${milestones[0].label} : ${formatDate(addDays(startDate, milestones[0].days))}`;
+            document.getElementById('endDate').textContent = formatDate(endDate);
+            
+            let detailsHTML = `<strong>Échéancier estimé pour une procédure en droit ${procedureType}:</strong><br>`;
+            milestones.forEach(milestone => {
+                const milestoneDate = addDays(startDate, milestone.days);
+                detailsHTML += `- ${milestone.label}: ${formatDate(milestoneDate)}<br>`;
+            });
+            
+            document.getElementById('timelineDetails').innerHTML = detailsHTML;
+            document.getElementById('timelineResult').classList.add('show');
+        }
+        
+        // Mettre à jour l'affichage de la valeur des heures
+        document.getElementById('hoursEstimated').addEventListener('input', function() {
+            document.getElementById('hoursValue').textContent = `${this.value}h`;
+        });
+        
+        // ===== FONCTIONS UTILITAIRES =====
+        
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('fr-FR', {
+                style: 'currency',
+                currency: 'XOF',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+        
+        function formatDate(date) {
+            return date.toLocaleDateString('fr-FR', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+        
+        function addDays(date, days) {
+            const result = new Date(date);
+            result.setDate(result.getDate() + days);
+            return result;
+        }
+        
+        // Smooth scrolling pour les ancres
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    // Fermer le menu mobile si ouvert
+                    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+                    const mainNav = document.getElementById('mainNav');
+                    if (mainNav.classList.contains('active')) {
+                        mainNav.classList.remove('active');
+                        mobileMenuBtn.querySelector('i').classList.replace('fa-times', 'fa-bars');
+                    }
+                    
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Header qui devient transparent en défilant
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(255, 255, 255, 0.95)';
+                header.style.backdropFilter = 'blur(10px)';
+            } else {
+                header.style.background = 'white';
+                header.style.backdropFilter = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

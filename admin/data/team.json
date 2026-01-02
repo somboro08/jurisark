@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "name": "Maître Jean Dossou",
+        "title": "Avocat Principal - Droit des Affaires",
+        "bio": "15 ans d'expérience en droit commercial international et en fusion-acquisition.",
+        "photo": "https://images.unsplash.com/photo-1582750433449-648ed127bb54?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+        "specialty": "Droit des affaires",
+        "experience": 15,
+        "order": 1
+    },
+    {
+        "id": 2,
+        "name": "Maître Amina Chabi",
+        "title": "Avocate - Droit Immobilier & Patrimonial",
+        "bio": "Spécialiste en droit immobilier et gestion patrimoniale.",
+        "photo": "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+        "specialty": "Droit immobilier",
+        "experience": 10,
+        "order": 2
+    }
+]

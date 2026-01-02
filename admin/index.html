@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Juris Ark - Connexion</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Mulish', sans-serif;
+            background: linear-gradient(135deg, #1a3a5f 0%, #2c5aa0 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 0 20px;
+        }
+        
+        .login-box {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        
+        .logo {
+            margin-bottom: 30px;
+        }
+        
+        .logo i {
+            font-size: 3rem;
+            color: #c9a96e;
+            margin-bottom: 10px;
+        }
+        
+        .logo h1 {
+            color: #1a3a5f;
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+        
+        .logo p {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-family: 'Mulish', sans-serif;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: #c9a96e;
+            outline: none;
+        }
+        
+        .btn-login {
+            width: 100%;
+            background: #c9a96e;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-family: 'Mulish', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+        
+        .btn-login:hover {
+            background: #b89446;
+        }
+        
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            color: #6c757d;
+            font-size: 0.8rem;
+        }
+        
+        @media (max-width: 480px) {
+            .login-box {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="logo">
+                <i class="fas fa-balance-scale"></i>
+                <h1>JURIS ARK</h1>
+                <p>Administration</p>
+            </div>
+            
+            <div class="alert alert-error" id="errorAlert">
+                Identifiants incorrects. Veuillez réessayer.
+            </div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Nom d'utilisateur</label>
+                    <input type="text" id="username" class="form-control" placeholder="admin" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" class="form-control" placeholder="••••••••" required>
+                </div>
+                
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i> Se connecter
+                </button>
+            </form>
+            
+            <div class="footer">
+                <p>© 2023 Juris Ark. Accès réservé au personnel autorisé.</p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+    <script>
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorAlert = document.getElementById('errorAlert');
+            const loginButton = document.querySelector('#loginForm .btn-login');
+            const originalButtonHtml = loginButton.innerHTML;
+            
+            showLoading(loginButton);
+            
+            const { data, error } = await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: password,
+            });
+
+            if (error) {
+                console.error("Login error:", error.message);
+                errorAlert.textContent = "Identifiants incorrects ou erreur de connexion.";
+                errorAlert.style.display = 'block';
+                setTimeout(() => {
+                    errorAlert.style.display = 'none';
+                }, 3000);
+            } else {
+                sessionStorage.setItem('admin_logged_in', 'true');
+                sessionStorage.setItem('admin_username', data.user.email);
+                window.location.href = 'dashboard.html';
+            }
+            hideLoading(loginButton, originalButtonHtml);
+        });
+        
+        function showLoading(button) {
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connexion...';
+        }
+        
+        function hideLoading(button, originalHtml) {
+            button.disabled = false;
+            button.innerHTML = originalHtml;
+        }
+        
+        // Vérifier si déjà connecté via Supabase
+        async function checkSession() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                sessionStorage.setItem('admin_logged_in', 'true');
+                sessionStorage.setItem('admin_username', session.user.email);
+                window.location.href = 'dashboard.html';
+            }
+        }
+        checkSession();
+        
+    </script>
+</body>
+</html>

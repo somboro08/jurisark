@@ -1,0 +1,16 @@
+[
+    {
+        "id": 1,
+        "question": "Quels sont les délais moyens pour un recouvrement de créances ?",
+        "answer": "Les délais varient selon la complexité du dossier...",
+        "category": "Procédures",
+        "order": 1
+    },
+    {
+        "id": 2,
+        "question": "Comment sont calculés vos honoraires ?",
+        "answer": "Nos honoraires sont calculés selon plusieurs méthodes...",
+        "category": "Honoraires",
+        "order": 2
+    }
+]
