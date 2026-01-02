@@ -81,15 +81,18 @@ function initModals() {
     document.getElementById('addBlogBtn')?.addEventListener('click', () => openModal('blog'));
     document.getElementById('addFormationBtn')?.addEventListener('click', () => openModal('formation'));
 
-    // Close Modals
-    document.querySelectorAll('.modal-close').forEach(button => {
-        button.addEventListener('click', () => closeModal(button.dataset.modal));
+    // Close Modals with .modal-close or .btn-cancel buttons
+    document.querySelectorAll('.modal-close, .btn-cancel').forEach(button => {
+        const modalId = button.getAttribute('data-modal');
+        if (modalId) {
+            button.addEventListener('click', () => closeModal(modalId));
+        }
     });
 
     // Close modal when clicking outside of it
     window.addEventListener('click', (event) => {
         if (event.target.classList.contains('modal')) {
-            event.target.style.display = 'none';
+            closeModal(event.target.id);
         }
     });
 
@@ -114,25 +117,32 @@ function initModals() {
 };
 
 function openModal(type, id = null) {
-    currentModal = document.getElementById(type + 'Modal');
+    const modalId = type + 'Modal';
+    currentModal = document.getElementById(modalId);
     if (currentModal) {
         currentModal.style.display = 'block';
         // Reset form
         const form = document.getElementById(type + 'Form');
         if (form) {
             form.reset();
-            // Specific resets if needed, e.g., hidden IDs
-            if (document.getElementById(type + 'Id')) {
-                document.getElementById(type + 'Id').value = '';
-            }
         }
+        // Specific resets for hidden IDs
+        const idInput = document.getElementById(type + 'Id');
+        if (idInput) {
+            idInput.value = '';
+        }
+        
         // Set title
-        document.getElementById(type + 'ModalTitle').textContent = id ? `Modifier un ${type.charAt(0).toUpperCase() + type.slice(1)}` : `Ajouter un ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+        const titleEl = document.getElementById(type + 'ModalTitle');
+        if(titleEl) {
+            titleEl.textContent = id ? `Modifier ${type.charAt(0).toUpperCase() + type.slice(1)}` : `Ajouter ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+        }
     }
 }
 
-function closeModal(type) {
-    const modal = document.getElementById(type + 'Modal');
+function closeModal(modalId) {
+    if (!modalId) return;
+    const modal = document.getElementById(modalId);
     if (modal) {
         modal.style.display = 'none';
     }
@@ -847,239 +857,283 @@ async function saveTeam() {
 }
 
 async function saveFaq() {
-    const id = document.getElementById('faqId').value;
-    const question = document.getElementById('faqQuestion').value;
-    const answer = document.getElementById('faqAnswer').value;
-    const category = document.getElementById('faqCategory').value;
-    const order = parseInt(document.getElementById('faqOrder').value);
+    const saveButton = document.getElementById('saveFaqBtn');
+    showLoading(saveButton, 'Enregistrement...');
+    try {
+        const id = document.getElementById('faqId').value;
+        const question = document.getElementById('faqQuestion').value;
+        const answer = document.getElementById('faqAnswer').value;
+        const category = document.getElementById('faqCategory').value;
+        const order = parseInt(document.getElementById('faqOrder').value);
 
-    const faqData = {
-        question,
-        answer,
-        category,
-        order
-    };
+        const faqData = {
+            question,
+            answer,
+            category,
+            order
+        };
 
-    let error = null;
-    if (id) {
-        // Update existing FAQ item
-        ({ error } = await supabaseClient.from('faq_items').update(faqData).eq('id', id));
-    } else {
-        // Insert new FAQ item
-        ({ error } = await supabaseClient.from('faq_items').insert([faqData]));
-    }
+        let error = null;
+        if (id) {
+            ({ error } = await supabaseClient.from('faq_items').update(faqData).eq('id', id));
+        } else {
+            ({ error } = await supabaseClient.from('faq_items').insert([faqData]));
+        }
 
-    if (error) {
+        if (error) {
+            throw error;
+        } else {
+            console.log('FAQ enregistrée avec succès.');
+            await loadAllData();
+            closeModal('faqModal');
+        }
+    } catch (error) {
         showError(`Erreur lors de l'enregistrement de la FAQ: ${error.message}`);
-    } else {
-        console.log('FAQ enregistrée avec succès.');
-        await loadAllData();
-        closeModal('faq');
+    } finally {
+        hideLoading(saveButton);
     }
 }
 
 async function saveDeadline() {
-    const id = document.getElementById('deadlineId').value;
-    const date = document.getElementById('deadlineDate').value; // Already YYYY-MM-DD from input type="date"
-    const description = document.getElementById('deadlineDescription').value;
-    const type = document.getElementById('deadlineType').value;
-    const client = document.getElementById('deadlineClient').value;
-    const urgent = document.getElementById('deadlineUrgent').value === '1'; // Convert to boolean
-    const notes = document.getElementById('deadlineNotes').value;
+    const saveButton = document.getElementById('saveDeadlineBtn');
+    showLoading(saveButton, 'Enregistrement...');
+    try {
+        const id = document.getElementById('deadlineId').value;
+        const date = document.getElementById('deadlineDate').value;
+        const description = document.getElementById('deadlineDescription').value;
+        const type = document.getElementById('deadlineType').value;
+        const client = document.getElementById('deadlineClient').value;
+        const urgent = document.getElementById('deadlineUrgent').value === '1';
+        const notes = document.getElementById('deadlineNotes').value;
 
-    const deadlineData = {
-        date,
-        description,
-        type,
-        client,
-        urgent,
-        notes
-    };
+        const deadlineData = {
+            date,
+            description,
+            type,
+            client,
+            urgent,
+            notes
+        };
 
-    let error = null;
-    if (id) {
-        // Update existing deadline
-        ({ error } = await supabaseClient.from('deadlines').update(deadlineData).eq('id', id));
-    } else {
-        // Insert new deadline
-        ({ error } = await supabaseClient.from('deadlines').insert([deadlineData]));
-    }
+        let error = null;
+        if (id) {
+            ({ error } = await supabaseClient.from('deadlines').update(deadlineData).eq('id', id));
+        } else {
+            ({ error } = await supabaseClient.from('deadlines').insert([deadlineData]));
+        }
 
-    if (error) {
+        if (error) {
+            throw error;
+        } else {
+            console.log('Délai enregistré avec succès.');
+            await loadAllData();
+            closeModal('deadlineModal');
+        }
+    } catch (error) {
         showError(`Erreur lors de l'enregistrement du délai: ${error.message}`);
-    } else {
-        console.log('Délai enregistré avec succès.');
-        await loadAllData();
-        closeModal('deadline');
+    } finally {
+        hideLoading(saveButton);
     }
 }
 
 async function saveTestimonial() {
-    const id = document.getElementById('testimonialId').value;
-    const author_name = document.getElementById('testimonialName').value;
-    const author_position = document.getElementById('testimonialPosition').value;
-    const content = document.getElementById('testimonialContent').value;
-    const author_photo_url = document.getElementById('testimonialPhoto').value;
-    const rating = parseInt(document.getElementById('testimonialRating').value);
-    const date = document.getElementById('testimonialDate').value; // YYYY-MM-DD
+    const saveButton = document.getElementById('saveTestimonialBtn');
+    showLoading(saveButton, 'Enregistrement...');
+    try {
+        const id = document.getElementById('testimonialId').value;
+        const author_name = document.getElementById('testimonialName').value;
+        const author_position = document.getElementById('testimonialPosition').value;
+        const content = document.getElementById('testimonialContent').value;
+        const author_photo_url = document.getElementById('testimonialPhoto').value;
+        const rating = parseInt(document.getElementById('testimonialRating').value);
+        const date = document.getElementById('testimonialDate').value;
 
-    const testimonialData = {
-        author_name,
-        author_position,
-        content,
-        author_photo_url,
-        rating,
-        date
-    };
+        const testimonialData = {
+            author_name,
+            author_position,
+            content,
+            author_photo_url,
+            rating,
+            date
+        };
 
-    let error = null;
-    if (id) {
-        // Update existing testimonial
-        ({ error } = await supabaseClient.from('testimonials').update(testimonialData).eq('id', id));
-    } else {
-        // Insert new testimonial
-        ({ error } = await supabaseClient.from('testimonials').insert([testimonialData]));
-    }
+        let error = null;
+        if (id) {
+            ({ error } = await supabaseClient.from('testimonials').update(testimonialData).eq('id', id));
+        } else {
+            ({ error } = await supabaseClient.from('testimonials').insert([testimonialData]));
+        }
 
-    if (error) {
+        if (error) {
+            throw error;
+        } else {
+            console.log('Témoignage enregistré avec succès.');
+            await loadAllData();
+            closeModal('testimonialModal');
+        }
+    } catch (error) {
         showError(`Erreur lors de l'enregistrement du témoignage: ${error.message}`);
-    } else {
-        console.log('Témoignage enregistré avec succès.');
-        await loadAllData();
-        closeModal('testimonial');
+    } finally {
+        hideLoading(saveButton);
     }
 }
 
 async function saveCase() {
-    const id = document.getElementById('caseId').value;
-    const title = document.getElementById('caseTitle').value;
-    const description = document.getElementById('caseDescription').value;
-    const category = document.getElementById('caseCategory').value;
-    const result = document.getElementById('caseResult').value;
-    const amount = document.getElementById('caseAmount').value;
-    const duration = document.getElementById('caseDuration').value;
-    const outcome = document.getElementById('caseOutcome').value;
+    const saveButton = document.getElementById('saveCaseBtn');
+    showLoading(saveButton, 'Enregistrement...');
+    try {
+        const id = document.getElementById('caseId').value;
+        const title = document.getElementById('caseTitle').value;
+        const description = document.getElementById('caseDescription').value;
+        const category = document.getElementById('caseCategory').value;
+        const result = document.getElementById('caseResult').value;
+        const amount = document.getElementById('caseAmount').value;
+        const duration = document.getElementById('caseDuration').value;
+        const outcome = document.getElementById('caseOutcome').value;
 
-    const caseData = {
-        title,
-        description,
-        category,
-        result,
-        amount,
-        duration,
-        outcome
-    };
+        const caseData = {
+            title,
+            description,
+            category,
+            result,
+            amount,
+            duration,
+            outcome
+        };
 
-    let error = null;
-    if (id) {
-        // Update existing case study
-        ({ error } = await supabaseClient.from('case_studies').update(caseData).eq('id', id));
-    } else {
-        // Insert new case study
-        ({ error } = await supabaseClient.from('case_studies').insert([caseData]));
-    }
+        let error = null;
+        if (id) {
+            ({ error } = await supabaseClient.from('case_studies').update(caseData).eq('id', id));
+        } else {
+            ({ error } = await supabaseClient.from('case_studies').insert([caseData]));
+        }
 
-    if (error) {
+        if (error) {
+            throw error;
+        } else {
+            console.log('Succès d\'affaires enregistré avec succès.');
+            await loadAllData();
+            closeModal('caseModal');
+        }
+    } catch (error) {
         showError(`Erreur lors de l'enregistrement du succès d'affaires: ${error.message}`);
-    } else {
-        console.log('Succès d\'affaires enregistré avec succès.');
-        await loadAllData();
-        closeModal('case');
+    } finally {
+        hideLoading(saveButton);
     }
 }
 
 async function saveBlog() {
-    const id = document.getElementById('blogId').value;
-    const title = document.getElementById('blogTitle').value;
-    const excerpt = document.getElementById('blogExcerpt').value;
-    const content = document.getElementById('blogContent').value;
-    const category = document.getElementById('blogCategory').value;
-    const author = document.getElementById('blogAuthor').value;
-    const created_at = document.getElementById('blogDate').value; // YYYY-MM-DD
-    const image_url = document.getElementById('blogImage').value;
-    const status = document.getElementById('blogStatus').value;
+    const saveButton = document.getElementById('saveBlogBtn');
+    showLoading(saveButton, 'Enregistrement...');
+    try {
+        const id = document.getElementById('blogId').value;
+        const title = document.getElementById('blogTitle').value;
+        const excerpt = document.getElementById('blogExcerpt').value;
+        const content = document.getElementById('blogContent').value;
+        const category = document.getElementById('blogCategory').value;
+        const author = document.getElementById('blogAuthor').value;
+        const created_at = document.getElementById('blogDate').value;
+        const image_url = document.getElementById('blogImage').value;
+        const status = document.getElementById('blogStatus').value;
 
-    const blogData = {
-        title,
-        excerpt,
-        content,
-        category,
-        author,
-        created_at,
-        image_url,
-        status
-    };
+        const blogData = {
+            title,
+            excerpt,
+            content,
+            category,
+            author,
+            created_at,
+            image_url,
+            status
+        };
 
-    let error = null;
-    if (id) {
-        // Update existing blog post
-        ({ error } = await supabaseClient.from('blog_posts').update(blogData).eq('id', id));
-    } else {
-        // Insert new blog post
-        ({ error } = await supabaseClient.from('blog_posts').insert([blogData]));
-    }
+        let error = null;
+        if (id) {
+            ({ error } = await supabaseClient.from('blog_posts').update(blogData).eq('id', id));
+        } else {
+            ({ error } = await supabaseClient.from('blog_posts').insert([blogData]));
+        }
 
-    if (error) {
+        if (error) {
+            throw error;
+        } else {
+            console.log('Article de blog enregistré avec succès.');
+            await loadAllData();
+            closeModal('blogModal');
+        }
+    } catch (error) {
         showError(`Erreur lors de l'enregistrement de l'article de blog: ${error.message}`);
-    } else {
-        console.log('Article de blog enregistré avec succès.');
-        await loadAllData();
-        closeModal('blog');
+    } finally {
+        hideLoading(saveButton);
     }
 }
 
 async function saveGeneralSettings() {
-    const site_name = document.getElementById('siteName').value;
-    const contact_email = document.getElementById('siteEmail').value;
-    const contact_phone = document.getElementById('sitePhone').value;
-    const address = document.getElementById('siteAddress').value;
-    const description = document.getElementById('siteDescription').value;
+    const saveButton = document.querySelector('#generalSettingsForm button[type="submit"]');
+    showLoading(saveButton, 'Enregistrement...');
+    try {
+        const site_name = document.getElementById('siteName').value;
+        const contact_email = document.getElementById('siteEmail').value;
+        const contact_phone = document.getElementById('sitePhone').value;
+        const address = document.getElementById('siteAddress').value;
+        const description = document.getElementById('siteDescription').value;
 
-    const settingsData = {
-        site_name,
-        contact_email,
-        contact_phone,
-        address,
-        description
-    };
+        const settingsData = {
+            site_name,
+            contact_email,
+            contact_phone,
+            address,
+            description
+        };
 
-    // Assuming a single row for settings with a fixed ID, e.g., 1
-    const { error } = await supabaseClient.from('site_settings').update(settingsData).eq('id', 1);
+        const { error } = await supabaseClient.from('site_settings').update(settingsData).eq('id', 1);
 
-    if (error) {
+        if (error) {
+            throw error;
+        } else {
+            console.log('Paramètres généraux enregistrés avec succès.');
+            await loadAllData();
+        }
+    } catch(error) {
         showError(`Erreur lors de l'enregistrement des paramètres généraux: ${error.message}`);
-    } else {
-        console.log('Paramètres généraux enregistrés avec succès.');
-        await loadAllData(); // Reload to reflect changes if necessary
-        // Settings don't have a modal to close, just a section
+    } finally {
+        hideLoading(saveButton);
     }
 }
 
 async function saveSecuritySettings() {
-    const newPassword = document.getElementById('newPassword').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
+    const saveButton = document.querySelector('#securitySettingsForm button[type="submit"]');
+    showLoading(saveButton, 'Mise à jour...');
+    try {
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
 
-    if (!newPassword || !confirmPassword) {
-        showError('Veuillez remplir tous les champs de mot de passe.');
-        return;
-    }
+        if (!newPassword || !confirmPassword) {
+            showError('Veuillez remplir tous les champs de mot de passe.');
+            return;
+        }
 
-    if (newPassword !== confirmPassword) {
-        showError('Les nouveaux mots de passe ne correspondent pas.');
-        return;
-    }
+        if (newPassword !== confirmPassword) {
+            showError('Les nouveaux mots de passe ne correspondent pas.');
+            return;
+        }
 
-    const { error } = await supabaseClient.auth.updateUser({
-        password: newPassword
-    });
+        const { error } = await supabaseClient.auth.updateUser({
+            password: newPassword
+        });
 
-    if (error) {
+        if (error) {
+            throw error;
+        } else {
+            console.log('Mot de passe mis à jour avec succès. Vous serez déconnecté pour appliquer les changements.');
+            alert('Mot de passe mis à jour avec succès. Veuillez vous reconnecter.');
+            await supabaseClient.auth.signOut();
+            window.location.href = 'index.html';
+        }
+    } catch(error) {
         showError(`Erreur lors de la mise à jour du mot de passe: ${error.message}`);
-    } else {
-        console.log('Mot de passe mis à jour avec succès. Vous serez déconnecté pour appliquer les changements.');
-        alert('Mot de passe mis à jour avec succès. Veuillez vous reconnecter.');
-        await supabaseClient.auth.signOut();
-        window.location.href = 'index.html';
+    } finally {
+        hideLoading(saveButton);
     }
 }
 

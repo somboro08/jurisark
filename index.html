@@ -1639,70 +1639,8 @@
                 <p>Renforcez vos compétences avec nos programmes de certification destinés aux professionnels et aux particuliers.</p>
             </div>
 
-            <div class="formations-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-lg); margin-top: var(--spacing-lg);">
-                
-                <div class="formation-card card">
-                    <div class="card-icon" style="font-size: 2.5rem; color: var(--secondary); margin-bottom: var(--spacing-sm);"><i class="fas fa-briefcase"></i></div>
-                    <h3>Droit Fiscal des Entreprises</h3>
-                    <p>Maîtrisez les aspects fiscaux de la gestion d'entreprise, de la déclaration à l'optimisation.</p>
-                </div>
-
-                <div class="formation-card card">
-                    <div class="card-icon" style="font-size: 2.5rem; color: var(--secondary); margin-bottom: var(--spacing-sm);"><i class="fas fa-users-cog"></i></div>
-                    <h3>Gestion de la Paie et Droit Social</h3>
-                    <p>Apprenez à gérer la paie et à vous conformer aux réglementations du droit du travail.</p>
-                </div>
-
-                <div class="formation-card card">
-                    <div class="card-icon" style="font-size: 2.5rem; color: var(--secondary); margin-bottom: var(--spacing-sm);"><i class="fas fa-handshake"></i></div>
-                    <h3>Contrats et Négociations Commerciales</h3>
-                    <p>Développez vos compétences en rédaction et négociation de contrats commerciaux.</p>
-                </div>
-
-                <div class="formation-card card">
-                    <div class="card-icon" style="font-size: 2.5rem; color: var(--secondary); margin-bottom: var(--spacing-sm);"><i class="fas fa-building"></i></div>
-                    <h3>Droit Immobilier et de la Construction</h3>
-                    <p>Comprenez les aspects juridiques des transactions immobilières et des projets de construction.</p>
-                </div>
-
-                <div class="formation-card card">
-                    <div class="card-icon" style="font-size: 2.5rem; color: var(--secondary); margin-bottom: var(--spacing-sm);"><i class="fas fa-shield-alt"></i></div>
-                    <h3>Prévention des Risques Juridiques</h3>
-                    <p>Identifiez et anticipez les risques juridiques pour protéger votre entreprise.</p>
-                </div>
-
-                <div class="formation-card card">
-                    <div class="card-icon" style="font-size: 2.5rem; color: var(--secondary); margin-bottom: var(--spacing-sm);"><i class="fas fa-money-check-alt"></i></div>
-                    <h3>Recouvrement de Créances : Stratégies et Bonnes Pratiques</h3>
-                    <p>Découvrez des méthodes efficaces et légales pour le recouvrement de vos créances.</p>
-                </div>
-
-            </div>
-
-            <div style="text-align: center; margin-top: var(--spacing-xl);">
-                <a href="#contact" class="btn">Demander plus d'informations</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- ===== STATISTIQUES ===== -->
-    <section class="stats-section">
-        <div class="container">
-            <div class="stat-item">
-                <span class="stat-number" id="stat1">0</span>
-                <span class="stat-label">Clients Satisfaits</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-number" id="stat2">0</span>
-                <span class="stat-label">% de Succès</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-number" id="stat3">0</span>
-                <span class="stat-label">Ans d'Expérience</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-number" id="stat4">0</span>
-                <span class="stat-label">Dossiers Traités</span>
+            <div id="formationsContainer" class="formations-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-lg); margin-top: var(--spacing-lg);">
+                <!-- Les formations seront chargées ici par JavaScript -->
             </div>
         </div>
     </section>
@@ -2011,6 +1949,34 @@
         </div>
     </section>
 
+
+    <!-- Formation Registration Modal -->
+    <div id="formationRegistrationModal" style="display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5);">
+        <div style="background-color: #fefefe; margin: 10% auto; padding: 30px; border: 1px solid #888; width: 80%; max-width: 500px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 25px;">
+                <h3 style="margin: 0; font-size: 1.5rem; color: var(--primary);">Inscription à la Formation</h3>
+                <span class="close-formation-modal" style="color: #aaa; font-size: 32px; font-weight: bold; cursor: pointer;">&times;</span>
+            </div>
+            <form id="formationRegistrationForm">
+                <input type="hidden" id="registrationFormationId">
+                <div class="form-group">
+                    <label for="registrationName">Nom complet *</label>
+                    <input type="text" id="registrationName" required>
+                </div>
+                <div class="form-group">
+                    <label for="registrationEmail">Email *</label>
+                    <input type="email" id="registrationEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="registrationPhone">Téléphone</label>
+                    <input type="tel" id="registrationPhone">
+                </div>
+                <p style="margin-top: 20px;">Vous vous inscrivez à la formation : <strong id="registrationFormationName" style="color: var(--primary);"></strong></p>
+                <button type="submit" class="btn" style="width: 100%; margin-top: 20px;">Confirmer l'inscription</button>
+            </form>
+        </div>
+    </div>
+
     <!-- ===== WIDGETS FIXES ===== -->
     
     <!-- Widget Chat en Direct -->
@@ -2045,6 +2011,28 @@
             <!-- Les délais seront générés par JavaScript -->
         </ul>
     </div>
+
+    <!-- ===== STATISTIQUES ===== -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stat-item">
+                <span class="stat-number" id="stat1">0</span>
+                <span class="stat-label">Clients Satisfaits</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="stat2">0</span>
+                <span class="stat-label">% de Succès</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="stat3">0</span>
+                <span class="stat-label">Ans d'Expérience</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="stat4">0</span>
+                <span class="stat-label">Dossiers Traités</span>
+            </div>
+        </div>
+    </section>
 
     <!-- ===== FOOTER ===== -->
     <footer>
@@ -2126,6 +2114,7 @@
                     initPartners();
                     initChat();
                     initStatsCounter();
+                    initFormations();
                     
                     // Initialiser la navigation mobile
                     initMobileMenu();
@@ -2135,6 +2124,95 @@
                     
                     // Initialiser la recherche du glossaire
                     initGlossarySearch();
+                });
+
+                async function initFormations() {
+                    const container = document.getElementById('formationsContainer');
+                    if (!container) return;
+
+                    const { data: formations, error } = await supabaseClient.from('formations').select('*');
+
+                    if (error) {
+                        console.error("Error fetching formations:", error.message);
+                        container.innerHTML = '<p>Impossible de charger les formations pour le moment.</p>';
+                        return;
+                    }
+
+                    container.innerHTML = ''; // Clear static content
+
+                    formations.forEach(formation => {
+                        const card = document.createElement('div');
+                        card.className = 'formation-card card';
+                        card.innerHTML = `
+                            <div class="card-icon" style="font-size: 2.5rem; color: var(--secondary); margin-bottom: var(--spacing-sm);"><i class="${formation.icon || 'fas fa-graduation-cap'}"></i></div>
+                            <h3>${formation.title}</h3>
+                            <p>${formation.description}</p>
+                            <div style="text-align: center; margin-top: var(--spacing-md);">
+                                <button class="btn btn-register-formation" data-id="${formation.id}" data-title="${formation.title}">S'inscrire</button>
+                            </div>
+                        `;
+                        container.appendChild(card);
+                    });
+
+                    // Add event listeners for new buttons
+                    document.querySelectorAll('.btn-register-formation').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const formationId = this.dataset.id;
+                            const formationTitle = this.dataset.title;
+                            openFormationModal(formationId, formationTitle);
+                        });
+                    });
+                }
+
+                function openFormationModal(id, title) {
+                    const modal = document.getElementById('formationRegistrationModal');
+                    document.getElementById('registrationFormationId').value = id;
+                    document.getElementById('registrationFormationName').textContent = title;
+                    modal.style.display = 'block';
+                }
+
+                // Add close logic for the new modal
+                document.querySelector('.close-formation-modal').addEventListener('click', () => {
+                    document.getElementById('formationRegistrationModal').style.display = 'none';
+                });
+                
+                // Close modal if clicking outside of the content
+                window.addEventListener('click', (event) => {
+                    const modal = document.getElementById('formationRegistrationModal');
+                    if (event.target == modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+
+
+                // Add form submission logic
+                document.getElementById('formationRegistrationForm').addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const saveButton = this.querySelector('button[type="submit"]');
+                    saveButton.disabled = true;
+                    saveButton.textContent = 'Envoi en cours...';
+
+                    const registrationData = {
+                        formation_id: document.getElementById('registrationFormationId').value,
+                        name: document.getElementById('registrationName').value,
+                        email: document.getElementById('registrationEmail').value,
+                        phone: document.getElementById('registrationPhone').value,
+                    };
+
+                    const { error } = await supabaseClient.from('formation_registrations').insert([registrationData]);
+
+                    if (error) {
+                        alert('Une erreur est survenue lors de votre inscription. Veuillez réessayer.');
+                        console.error('Registration Error:', error.message);
+                        saveButton.disabled = false;
+                        saveButton.textContent = "Confirmer l'inscription";
+                    } else {
+                        alert('Merci ! Votre inscription a bien été prise en compte.');
+                        document.getElementById('formationRegistrationModal').style.display = 'none';
+                        this.reset();
+                        saveButton.disabled = false;
+                        saveButton.textContent = "Confirmer l'inscription";
+                    }
                 });
                 
                 // ===== FONCTIONS D'INITIALISATION =====
@@ -2165,7 +2243,7 @@
                         const memberHTML = `
                             <div class="team-member">
                                 <div class="member-img">
-                                    <img src="${member.img_url || 'https://via.placeholder.com/500x500.png?text=Photo+Membre'}" alt="${member.name}">
+                                    <img src="${member.photo_url || 'https://via.placeholder.com/500x500.png?text=Photo+Membre'}" alt="${member.name}">
                                     <div class="member-social">
                                         ${member.linkedin_url ? `<a href="${member.linkedin_url}" target="_blank"><i class="fab fa-linkedin-in"></i></a>` : ''}
                                         ${member.email ? `<a href="mailto:${member.email}"><i class="fas fa-envelope"></i></a>` : ''}

@@ -5,6 +5,7 @@ CREATE TABLE "team_members" (
     "title" text,
     "specialty" text,
     "bio" text,
+    "experience" integer,
     "photo_url" text,
     "order" integer,
     "email" text,
@@ -189,3 +190,16 @@ ALTER TABLE "formations" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Public read access for formations" ON "formations" FOR SELECT USING (true);
 CREATE POLICY "Admin full access for formations" ON "formations" FOR ALL USING (auth.role() = 'authenticated') WITH CHECK (auth.role() = 'authenticated');
 
+-- 14. Table for Formation Registrations
+CREATE TABLE "formation_registrations" (
+    "id" uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+    "formation_id" uuid REFERENCES formations(id) ON DELETE SET NULL,
+    "name" text NOT NULL,
+    "email" text NOT NULL,
+    "phone" text,
+    "status" text DEFAULT 'En attente',
+    "created_at" timestamp with time zone DEFAULT now()
+);
+ALTER TABLE "formation_registrations" ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public can create registrations" ON "formation_registrations" FOR INSERT WITH CHECK (true);
+CREATE POLICY "Admin can manage registrations" ON "formation_registrations" FOR ALL USING (auth.role() = 'authenticated') WITH CHECK (auth.role() = 'authenticated');
