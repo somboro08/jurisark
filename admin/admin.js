@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const { data: activitiesData, error: activitiesError } = await supabaseClient.from('activities').select('*');
         const { data: appointmentsData, error: appointmentsError } = await supabaseClient.from('appointments').select('*');
         const { data: formationsData, error: formationsError } = await supabaseClient.from('formations').select('*');
+        const { data: formationRegistrationsData, error: formationRegistrationsError } = await supabaseClient.from('formation_registregistrations').select('*');
 
         if (teamError) console.error("Error fetching team_members:", teamError.message);
         if (faqError) console.error("Error fetching faq_items:", faqError.message);
@@ -38,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (activitiesError) console.error("Error fetching activities:", activitiesError.message);
         if (appointmentsError) console.error("Error fetching appointments:", appointmentsError.message);
         if (formationsError) console.error("Error fetching formations:", formationsError.message);
+        if (formationRegistrationsError) console.error("Error fetching formation_registrations:", formationRegistrationsError.message);
 
         data = {
             team: teamData || [],
@@ -49,7 +51,8 @@ document.addEventListener('DOMContentLoaded', function() {
             settings: settingsData && settingsData.length > 0 ? settingsData[0] : {}, // Assuming settings is a single row
             activities: activitiesData || [],
             appointments: appointmentsData || [],
-            formations: formationsData || []
+            formations: formationsData || [],
+            formation_registrations: formationRegistrationsData || [],
         };
         
         console.log('Data loaded from Supabase:', data);
@@ -104,6 +107,8 @@ function initModals() {
     document.getElementById('saveCaseBtn')?.addEventListener('click', saveCase);
     document.getElementById('saveBlogBtn')?.addEventListener('click', saveBlog);
     document.getElementById('saveFormationBtn')?.addEventListener('click', saveFormation);
+    document.getElementById('confirmDeleteBtn')?.addEventListener('click', deleteItem);
+
 
     document.getElementById('generalSettingsForm')?.addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -238,6 +243,7 @@ function switchSection(section) {
             'cases': 'Succès d\'Affaires',
             'blog': 'Articles de Blog',
             'formations': 'Gestion des Formations',
+            'formation_registrations': 'Inscriptions aux Formations',
             'appointments': 'Gestion des Rendez-vous',
             'settings': 'Paramètres'
         };
@@ -281,6 +287,9 @@ function loadSectionData(section) {
             break;
         case 'formations':
             loadFormationsTable();
+            break;
+        case 'formation_registrations':
+            loadFormationRegistrationsTable();
             break;
         case 'appointments':
             loadAppointmentsTable();
@@ -544,6 +553,58 @@ function loadFormationsTable() {
     });
 }
 
+function loadFormationRegistrationsTable() {
+    const tbody = document.getElementById('formationRegistrationsTableBody');
+    if (!tbody || !data?.formation_registrations) return;
+
+    tbody.innerHTML = '';
+
+    if (data.formation_registrations.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px;">Aucune inscription pour le moment.</td></tr>';
+        return;
+    }
+
+    data.formation_registrations.forEach(item => {
+        const formation = data.formations.find(f => f.id === item.formation_id);
+        const formationTitle = formation ? formation.title : 'Formation inconnue';
+        const statusColor = item.status === 'Confirmé' ? 'var(--success)' : 'var(--warning)';
+        const row = `
+            <tr>
+                <td>${formationTitle}</td>
+                <td>${item.name}</td>
+                <td>${item.email}</td>
+                <td>${item.phone || '-'}</td>
+                <td>${formatDate(item.created_at)}</td>
+                <td><span style="color: ${statusColor}; font-weight: 600;">${item.status}</span></td>
+                <td class="actions">
+                    ${item.status !== 'Confirmé' ? 
+                    `<button class="btn-action btn-edit" onclick="confirmFormationRegistration(${item.id})">
+                        <i class="fas fa-check"></i> Confirmer
+                    </button>` : 
+                    ''
+                    }
+                    <button class="btn-action btn-delete" onclick="confirmDelete('formation_registration', ${item.id})">
+                        <i class="fas fa-trash"></i> Supprimer
+                    </button>
+                </td>
+            </tr>
+        `;
+        tbody.innerHTML += row;
+    });
+}
+
+async function confirmFormationRegistration(id) {
+    const { error } = await supabaseClient.from('formation_registrations').update({ status: 'Confirmé' }).eq('id', id);
+
+    if (error) {
+        showError(`Erreur lors de la confirmation de l'inscription: ${error.message}`);
+    } else {
+        console.log(`Registration ${id} confirmed.`);
+        await loadAllData(); 
+    }
+}
+
+
 function editFormation(id) {
     openModal('formation', id);
     const formation = data.formations.find(f => f.id === id);
@@ -717,6 +778,9 @@ async function deleteItem() {
             break;
         case 'formation':
             tableName = 'formations';
+            break;
+        case 'formation_registration':
+            tableName = 'formation_registrations';
             break;
         case 'appointment':
             tableName = 'appointments';

@@ -66,6 +66,12 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a href="#formation_registrations" class="nav-link" data-section="formation_registrations">
+                    <i class="fas fa-user-graduate"></i>
+                    <span>Inscriptions Formations</span>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a href="#appointments" class="nav-link" data-section="appointments">
                     <i class="fas fa-calendar-check"></i>
                     <span>Rendez-vous</span>
@@ -378,6 +384,35 @@
                             </tr>
                         </thead>
                         <tbody id="formationsTableBody">
+                            <!-- Données chargées dynamiquement -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Formation Registrations Section -->
+            <section id="formation_registrationsSection" class="section-content" style="display: none;">
+                <div class="section-header">
+                    <h2>Inscriptions aux Formations</h2>
+                </div>
+                
+                <div class="data-table">
+                    <div class="table-header">
+                        <div class="table-title">Liste des Inscriptions</div>
+                    </div>
+                    <table id="formationRegistrationsTable">
+                        <thead>
+                            <tr>
+                                <th>Formation</th>
+                                <th>Nom du client</th>
+                                <th>Email</th>
+                                <th>Téléphone</th>
+                                <th>Date d'inscription</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="formationRegistrationsTableBody">
                             <!-- Données chargées dynamiquement -->
                         </tbody>
                     </table>
