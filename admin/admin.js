@@ -1,78 +1,86 @@
- let data = {};
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM fully loaded and parsed');
+let data = {};
+let currentModal = null;
+let itemToDelete = null;
+let deleteType = null;
+let currentSection = 'dashboard';
+let rowToRemoveElement = null; // New global variable
 
-   
-    let currentSection = 'dashboard';
-    let currentModal = null;
-    let itemToDelete = null;
-    let deleteType = null;
+async function loadAllData() {
+    const { data: teamData, error: teamError } = await supabaseClient.from('team_members').select('*');
+    const { data: faqData, error: faqError } = await supabaseClient.from('faq_items').select('*');
+    const { data: deadlinesData, error: deadlinesError } = await supabaseClient.from('deadlines').select('*');
+    const { data: testimonialsData, error: testimonialsError } = await supabaseClient.from('testimonials').select('*');
+    const { data: casesData, error: casesError } = await supabaseClient.from('case_studies').select('*');
+    const { data: blogData, error: blogError } = await supabaseClient.from('blog_posts').select('*');
+    const { data: settingsData, error: settingsError } = await supabaseClient.from('site_settings').select('*');
+    const { data: activitiesData, error: activitiesError } = await supabaseClient.from('activities').select('*');
+    const { data: appointmentsData, error: appointmentsError } = await supabaseClient.from('appointments').select('*');
+    const { data: formationsData, error: formationsError } = await supabaseClient.from('formations').select('*');
+    const { data: formationRegistrationsData, error: formationRegistrationsError } = await supabaseClient.from('formation_registrations').select('*');
+
+    if (teamError) console.error("Error fetching team_members:", teamError.message);
+    if (faqError) console.error("Error fetching faq_items:", faqError.message);
+    if (deadlinesError) console.error("Error fetching deadlines:", deadlinesError.message);
+    if (testimonialsError) console.error("Error fetching testimonials:", testimonialsError.message);
+    if (casesError) console.error("Error fetching case_studies:", casesError.message);
+    if (blogError) console.error("Error fetching blog_posts:", blogError.message);
+    if (settingsError) console.error("Error fetching site_settings:", settingsError.message);
+    if (activitiesError) console.error("Error fetching activities:", activitiesError.message);
+    if (appointmentsError) console.error("Error fetching appointments:", appointmentsError.message);
+    if (formationsError) console.error("Error fetching formations:", formationsError.message);
+    if (formationRegistrationsError) console.error("Error fetching formation_registrations:", formationRegistrationsError.message);
+
+    data = {
+        team: teamData || [],
+        faq: faqData || [],
+        deadlines: deadlinesData || [],
+        testimonials: testimonialsData || [],
+        cases: casesData || [],
+        blog: blogData || [],
+        settings: settingsData && settingsData.length > 0 ? settingsData[0] : {}, // Assuming settings is a single row
+        activities: activitiesData || [],
+        appointments: appointmentsData || [],
+        formations: formationsData || [],
+        formation_registrations: formationRegistrationsData || [],
+    };
+    
+    console.log('Data loaded from Supabase:', data);
+
+    // Initialiser l'interface avec les données chargées
+    updateStats();
+    loadActivities();
+    initNavigation();
+    
+    // Initialiser le tableau de la section active
+    if (currentSection !== 'dashboard' && currentSection !== 'settings') {
+        loadSectionData(currentSection);
+    }
+}
+
+window.dashboard = {
+    loadAllData,
+    editTeam,
+    confirmDelete,
+    deleteItem,
+    editFaq,
+    editDeadline,
+    editTestimonial,
+    editCase,
+    editBlog,
+    editFormation,
+    confirmFormationRegistration,
+    confirmAppointment
+};
+
+document.addEventListener('DOMContentLoaded', function() {
 
     // Vérifier l'authentification
     checkAuth();
 
-    // Afficher le nom d'utilisateur (logic moved to checkAuth)
-    // const username = sessionStorage.getItem('admin_username') || 'Administrateur';
-    // document.getElementById('userName').textContent = username;
-
-    // Charger les données depuis les fichiers Supabase
-    async function loadAllData() {
-        const { data: teamData, error: teamError } = await supabaseClient.from('team_members').select('*');
-        const { data: faqData, error: faqError } = await supabaseClient.from('faq_items').select('*');
-        const { data: deadlinesData, error: deadlinesError } = await supabaseClient.from('deadlines').select('*');
-        const { data: testimonialsData, error: testimonialsError } = await supabaseClient.from('testimonials').select('*');
-        const { data: casesData, error: casesError } = await supabaseClient.from('case_studies').select('*');
-        const { data: blogData, error: blogError } = await supabaseClient.from('blog_posts').select('*');
-        const { data: settingsData, error: settingsError } = await supabaseClient.from('site_settings').select('*');
-        const { data: activitiesData, error: activitiesError } = await supabaseClient.from('activities').select('*');
-        const { data: appointmentsData, error: appointmentsError } = await supabaseClient.from('appointments').select('*');
-        const { data: formationsData, error: formationsError } = await supabaseClient.from('formations').select('*');
-        const { data: formationRegistrationsData, error: formationRegistrationsError } = await supabaseClient.from('formation_registrations').select('*');
-
-        if (teamError) console.error("Error fetching team_members:", teamError.message);
-        if (faqError) console.error("Error fetching faq_items:", faqError.message);
-        if (deadlinesError) console.error("Error fetching deadlines:", deadlinesError.message);
-        if (testimonialsError) console.error("Error fetching testimonials:", testimonialsError.message);
-        if (casesError) console.error("Error fetching case_studies:", casesError.message);
-        if (blogError) console.error("Error fetching blog_posts:", blogError.message);
-        if (settingsError) console.error("Error fetching site_settings:", settingsError.message);
-        if (activitiesError) console.error("Error fetching activities:", activitiesError.message);
-        if (appointmentsError) console.error("Error fetching appointments:", appointmentsError.message);
-        if (formationsError) console.error("Error fetching formations:", formationsError.message);
-        if (formationRegistrationsError) console.error("Error fetching formation_registrations:", formationRegistrationsError.message);
-
-        data = {
-            team: teamData || [],
-            faq: faqData || [],
-            deadlines: deadlinesData || [],
-            testimonials: testimonialsData || [],
-            cases: casesData || [],
-            blog: blogData || [],
-            settings: settingsData && settingsData.length > 0 ? settingsData[0] : {}, // Assuming settings is a single row
-            activities: activitiesData || [],
-            appointments: appointmentsData || [],
-            formations: formationsData || [],
-            formation_registrations: formationRegistrationsData || [],
-        };
-        
-        console.log('Data loaded from Supabase:', data);
-
-        // Initialiser l'interface avec les données chargées
-        updateStats();
-        loadActivities();
-        initNavigation();
-        
-        // Initialiser le tableau de la section active
-        if (currentSection !== 'dashboard' && currentSection !== 'settings') {
-            loadSectionData(currentSection);
-        }
-    }
-
-    loadAllData();
+    window.dashboard.loadAllData();
 
     initModals(); // Initialize modal functionality
 });
-
 
 function initModals() {
     // Add Event Listeners for "Add" buttons
@@ -107,7 +115,7 @@ function initModals() {
     document.getElementById('saveCaseBtn')?.addEventListener('click', saveCase);
     document.getElementById('saveBlogBtn')?.addEventListener('click', saveBlog);
     document.getElementById('saveFormationBtn')?.addEventListener('click', saveFormation);
-    document.getElementById('confirmDeleteBtn')?.addEventListener('click', deleteItem);
+    document.getElementById('confirmDeleteBtn')?.addEventListener('click', window.dashboard.deleteItem);
 
 
     document.getElementById('generalSettingsForm')?.addEventListener('submit', async function(e) {
@@ -122,26 +130,35 @@ function initModals() {
 };
 
 function openModal(type, id = null) {
+    console.log(`Attempting to open modal for type: ${type}, id: ${id}`);
     const modalId = type + 'Modal';
+    console.log(`Modal ID: ${modalId}`);
     currentModal = document.getElementById(modalId);
     if (currentModal) {
+        console.log(`Modal element found:`, currentModal);
         currentModal.style.display = 'block';
+        console.log(`Modal display set to block.`);
         // Reset form
         const form = document.getElementById(type + 'Form');
         if (form) {
             form.reset();
+            console.log(`Form ${type}Form reset.`);
         }
         // Specific resets for hidden IDs
         const idInput = document.getElementById(type + 'Id');
         if (idInput) {
             idInput.value = '';
+            console.log(`Hidden ID input ${type}Id reset.`);
         }
         
         // Set title
         const titleEl = document.getElementById(type + 'ModalTitle');
         if(titleEl) {
             titleEl.textContent = id ? `Modifier ${type.charAt(0).toUpperCase() + type.slice(1)}` : `Ajouter ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+            console.log(`Modal title set to: ${titleEl.textContent}`);
         }
+    } else {
+        console.error(`Modal element with ID ${modalId} not found.`);
     }
 }
 
@@ -249,7 +266,6 @@ function switchSection(section) {
         };
         
         document.getElementById('pageTitle').textContent = titles[section] || section;
-        currentSection = section;
         
         // Charger les données spécifiques à la section
         if (section !== 'dashboard' && section !== 'settings') {
@@ -259,11 +275,6 @@ function switchSection(section) {
 }
 
 // ===== CHARGEMENT DES DONNÉES =====
-
-// Supprimez la fonction loadData() complètement ou gardez-la vide
-function loadData() {
-    // Cette fonction n'est plus nécessaire car on charge directement dans le Promise
-}
 
 function loadSectionData(section) {
     switch(section) {
@@ -383,10 +394,10 @@ function loadTeamTable() {
                 <td>${member.title}</td>
                 <td>${member.specialty}</td>
                 <td class="actions">
-                    <button class="btn-action btn-edit" onclick="editTeam(${member.id})">
+                    <button class="btn-action btn-edit" onclick="dashboard.editTeam(Number(${member.id}))">
                         <i class="fas fa-edit"></i> Modifier
                     </button>
-                    <button class="btn-action btn-delete" onclick="confirmDelete('team', ${member.id})">
+                    <button class="btn-action btn-delete" onclick="dashboard.confirmDelete('team', Number(${member.id}), this)">
                         <i class="fas fa-trash"></i> Supprimer
                     </button>
                 </td>
@@ -409,10 +420,10 @@ function loadFaqTable() {
                 <td>${item.question}</td>
                 <td>${item.category}</td>
                 <td class="actions">
-                    <button class="btn-action btn-edit" onclick="editFaq(${item.id})">
+                    <button class="btn-action btn-edit" onclick="dashboard.editFaq(Number(${item.id}))">
                         <i class="fas fa-edit"></i> Modifier
                     </button>
-                    <button class="btn-action btn-delete" onclick="confirmDelete('faq', ${item.id})">
+                    <button class="btn-action btn-delete" onclick="dashboard.confirmDelete('faq', Number(${item.id}), this)">
                         <i class="fas fa-trash"></i> Supprimer
                     </button>
                 </td>
@@ -434,10 +445,10 @@ function loadDeadlinesTable() {
                 <td>${deadline.description}</td>
                 <td>${deadline.urgent ? '<span style="color: var(--warning);"><i class="fas fa-exclamation-circle"></i> Oui</span>' : 'Non'}</td>
                 <td class="actions">
-                    <button class="btn-action btn-edit" onclick="editDeadline(${deadline.id})">
+                    <button class="btn-action btn-edit" onclick="dashboard.editDeadline(Number(${deadline.id}))">
                         <i class="fas fa-edit"></i> Modifier
                     </button>
-                    <button class="btn-action btn-delete" onclick="confirmDelete('deadline', ${deadline.id})">
+                    <button class="btn-action btn-delete" onclick="dashboard.confirmDelete('deadline', Number(${deadline.id}), this)">
                         <i class="fas fa-trash"></i> Supprimer
                     </button>
                 </td>
@@ -460,10 +471,10 @@ function loadTestimonialsTable() {
                 <td>${testimonial.author_position}</td>
                 <td>${testimonial.content.substring(0, 80)}...</td>
                 <td class="actions">
-                    <button class="btn-action btn-edit" onclick="editTestimonial(${testimonial.id})">
+                    <button class="btn-action btn-edit" onclick="dashboard.editTestimonial(Number(${testimonial.id}))">
                         <i class="fas fa-edit"></i> Modifier
                     </button>
-                    <button class="btn-action btn-delete" onclick="confirmDelete('testimonial', ${testimonial.id})">
+                    <button class="btn-action btn-delete" onclick="dashboard.confirmDelete('testimonial', Number(${testimonial.id}), this)">
                         <i class="fas fa-trash"></i> Supprimer
                     </button>
                 </td>
@@ -487,10 +498,10 @@ function loadCasesTable() {
                 <td>${caseItem.amount}</td>
                 <td><span style="color: var(--success);">${caseItem.result}</span></td>
                 <td class="actions">
-                    <button class="btn-action btn-edit" onclick="editCase(${caseItem.id})">
+                    <button class="btn-action btn-edit" onclick="dashboard.editCase(Number(${caseItem.id}))">
                         <i class="fas fa-edit"></i> Modifier
                     </button>
-                    <button class="btn-action btn-delete" onclick="confirmDelete('case', ${caseItem.id})">
+                    <button class="btn-action btn-delete" onclick="dashboard.confirmDelete('case', Number(${caseItem.id}), this)">
                         <i class="fas fa-trash"></i> Supprimer
                     </button>
                 </td>
@@ -514,10 +525,10 @@ function loadBlogTable() {
                 <td>${formatDate(blogItem.created_at)}</td>
                 <td>${blogItem.status}</td>
                 <td class="actions">
-                    <button class="btn-action btn-edit" onclick="editBlog(${blogItem.id})">
+                    <button class="btn-action btn-edit" onclick="dashboard.editBlog(Number(${blogItem.id}))">
                         <i class="fas fa-edit"></i> Modifier
                     </button>
-                    <button class="btn-action btn-delete" onclick="confirmDelete('blog', ${blogItem.id})">
+                    <button class="btn-action btn-delete" onclick="dashboard.confirmDelete('blog', Number(${blogItem.id}), this)">
                         <i class="fas fa-trash"></i> Supprimer
                     </button>
                 </td>
@@ -540,10 +551,10 @@ function loadFormationsTable() {
                 <td>${formation.title}</td>
                 <td>${formation.description}</td>
                 <td class="actions">
-                    <button class="btn-action btn-edit" onclick="editFormation(${formation.id})">
+                    <button class="btn-action btn-edit" onclick="dashboard.editFormation(Number(${formation.id}))">
                         <i class="fas fa-edit"></i> Modifier
                     </button>
-                    <button class="btn-action btn-delete" onclick="confirmDelete('formation', ${formation.id})">
+                    <button class="btn-action btn-delete" onclick="dashboard.confirmDelete('formation', Number(${formation.id}), this)">
                         <i class="fas fa-trash"></i> Supprimer
                     </button>
                 </td>
@@ -578,12 +589,12 @@ function loadFormationRegistrationsTable() {
                 <td><span style="color: ${statusColor}; font-weight: 600;">${item.status}</span></td>
                 <td class="actions">
                     ${item.status !== 'Confirmé' ? 
-                    `<button class="btn-action btn-edit" onclick="confirmFormationRegistration(${item.id})">
+                    `<button class="btn-action btn-edit" onclick="dashboard.confirmFormationRegistration(Number(${item.id}))">
                         <i class="fas fa-check"></i> Confirmer
                     </button>` : 
                     ''
                     }
-                    <button class="btn-action btn-delete" onclick="confirmDelete('formation_registration', ${item.id})">
+                    <button class="btn-action btn-delete" onclick="dashboard.confirmDelete('formation_registration', Number(${item.id}), this)">
                         <i class="fas fa-trash"></i> Supprimer
                     </button>
                 </td>
@@ -600,7 +611,7 @@ async function confirmFormationRegistration(id) {
         showError(`Erreur lors de la confirmation de l'inscription: ${error.message}`);
     } else {
         console.log(`Registration ${id} confirmed.`);
-        await loadAllData(); 
+        await window.dashboard.loadAllData(); 
     }
 }
 
@@ -641,7 +652,7 @@ async function saveFormation() {
         showError(`Erreur lors de l'enregistrement de la formation: ${error.message}`);
     } else {
         console.log('Formation enregistrée avec succès.');
-        await loadAllData();
+        await window.dashboard.loadAllData();
         closeModal('formation');
     }
 }
@@ -673,14 +684,14 @@ function loadAppointmentsTable() {
                 <td><span style="color: ${statusColor}; font-weight: 600;">${item.status}</span></td>
                 <td class="actions">
                     ${item.status !== 'Confirmé' ? 
-                    `<button class="btn-action btn-edit" onclick="confirmAppointment(${item.id})">
+                    `<button class="btn-action btn-edit" onclick="dashboard.confirmAppointment(Number(${item.id}))">
                         <i class="fas fa-check"></i> Confirmer
                     </button>` : 
                     `<button class="btn-action" disabled>
                         <i class="fas fa-check-circle"></i> Confirmé
                     </button>`
                     }
-                    <button class="btn-action btn-delete" onclick="confirmDelete('appointment', ${item.id})">
+                    <button class="btn-action btn-delete" onclick="dashboard.confirmDelete('appointment', Number(${item.id}), this)">
                         <i class="fas fa-trash"></i> Supprimer
                     </button>
                 </td>
@@ -700,7 +711,7 @@ async function confirmAppointment(id) {
             showError(`Erreur lors de la confirmation du rendez-vous: ${error.message}`);
         } else {
             console.log(`Appointment ${appointment.name} on ${appointment.date} for ${appointment.service} confirmed in Supabase.`);
-            await loadAllData(); // Reload all data to refresh tables
+            await window.dashboard.loadAllData(); // Reload all data to refresh tables
         }
     }
 }
@@ -749,9 +760,10 @@ function editTeam(id) {
     }
 }
 
-function confirmDelete(type, id) {
+function confirmDelete(type, id, buttonElement) {
     itemToDelete = id;
     deleteType = type;
+    rowToRemoveElement = buttonElement.closest('tr');
     document.getElementById('confirmMessage').textContent = `Êtes-vous sûr de vouloir supprimer cet élément de ${type} (ID: ${id}) ?`;
     document.getElementById('confirmModal').style.display = 'block';
 }
@@ -801,7 +813,10 @@ async function deleteItem() {
         showError(`Erreur lors de la suppression: ${error.message}`);
     } else {
         console.log(`Élément de ${deleteType} (ID: ${itemToDelete}) supprimé avec succès.`);
-        await loadAllData();
+        if (rowToRemoveElement) {
+            rowToRemoveElement.remove(); // Remove the row immediately
+        }
+        await window.dashboard.loadAllData(); // Reload all data to refresh tables
         closeModal('confirm');
     }
 }
@@ -917,7 +932,7 @@ async function saveTeam() {
         showError(`Erreur lors de l'enregistrement du membre de l'équipe: ${error.message}`);
     } else {
         console.log('Membre de l\'équipe enregistré avec succès.');
-        await loadAllData(); // Reload all data to refresh tables
+        await window.dashboard.loadAllData(); // Reload all data to refresh tables
         closeModal('team');
     }
     hideLoading(saveButton); // Hide loading state
@@ -951,7 +966,7 @@ async function saveFaq() {
             throw error;
         } else {
             console.log('FAQ enregistrée avec succès.');
-            await loadAllData();
+            await window.dashboard.loadAllData();
             closeModal('faqModal');
         }
     } catch (error) {
@@ -993,7 +1008,7 @@ async function saveDeadline() {
             throw error;
         } else {
             console.log('Délai enregistré avec succès.');
-            await loadAllData();
+            await window.dashboard.loadAllData();
             closeModal('deadlineModal');
         }
     } catch (error) {
@@ -1035,7 +1050,7 @@ async function saveTestimonial() {
             throw error;
         } else {
             console.log('Témoignage enregistré avec succès.');
-            await loadAllData();
+            await window.dashboard.loadAllData();
             closeModal('testimonialModal');
         }
     } catch (error) {
@@ -1079,7 +1094,7 @@ async function saveCase() {
             throw error;
         } else {
             console.log('Succès d\'affaires enregistré avec succès.');
-            await loadAllData();
+            await window.dashboard.loadAllData();
             closeModal('caseModal');
         }
     } catch (error) {
@@ -1125,7 +1140,7 @@ async function saveBlog() {
             throw error;
         } else {
             console.log('Article de blog enregistré avec succès.');
-            await loadAllData();
+            await window.dashboard.loadAllData();
             closeModal('blogModal');
         }
     } catch (error) {
@@ -1159,7 +1174,7 @@ async function saveGeneralSettings() {
             throw error;
         } else {
             console.log('Paramètres généraux enregistrés avec succès.');
-            await loadAllData();
+            await window.dashboard.loadAllData();
         }
     } catch(error) {
         showError(`Erreur lors de l'enregistrement des paramètres généraux: ${error.message}`);
