@@ -5,6 +5,15 @@ let deleteType = null;
 let currentSection = 'dashboard';
 let rowToRemoveElement = null; // New global variable
 
+function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 async function loadAllData() {
     const { data: teamData, error: teamError } = await supabaseClient.from('team_members').select('*');
     const { data: faqData, error: faqError } = await supabaseClient.from('faq_items').select('*');
@@ -387,12 +396,12 @@ function loadTeamTable() {
             <tr>
                 <td>
                     <div style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden;">
-                        <img src="${member.photo_url}" alt="${member.name}" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="${escapeHtml(member.photo_url)}" alt="${escapeHtml(member.name)}" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
                 </td>
-                <td>${member.name}</td>
-                <td>${member.title}</td>
-                <td>${member.specialty}</td>
+                <td>${escapeHtml(member.name)}</td>
+                <td>${escapeHtml(member.title)}</td>
+                <td>${escapeHtml(member.specialty)}</td>
                 <td class="actions">
                     <button class="btn-action btn-edit" onclick="dashboard.editTeam(Number(${member.id}))">
                         <i class="fas fa-edit"></i> Modifier
@@ -417,8 +426,8 @@ function loadFaqTable() {
         const row = `
             <tr>
                 <td>${item.id}</td>
-                <td>${item.question}</td>
-                <td>${item.category}</td>
+                <td>${escapeHtml(item.question)}</td>
+                <td>${escapeHtml(item.category)}</td>
                 <td class="actions">
                     <button class="btn-action btn-edit" onclick="dashboard.editFaq(Number(${item.id}))">
                         <i class="fas fa-edit"></i> Modifier
@@ -442,7 +451,7 @@ function loadDeadlinesTable() {
         const row = `
             <tr>
                 <td>${formatDate(deadline.date)}</td>
-                <td>${deadline.description}</td>
+                <td>${escapeHtml(deadline.description)}</td>
                 <td>${deadline.urgent ? '<span style="color: var(--warning);"><i class="fas fa-exclamation-circle"></i> Oui</span>' : 'Non'}</td>
                 <td class="actions">
                     <button class="btn-action btn-edit" onclick="dashboard.editDeadline(Number(${deadline.id}))">
@@ -467,9 +476,9 @@ function loadTestimonialsTable() {
     data.testimonials.forEach(testimonial => {
         const row = `
             <tr>
-                <td>${testimonial.author_name}</td>
-                <td>${testimonial.author_position}</td>
-                <td>${testimonial.content.substring(0, 80)}...</td>
+                <td>${escapeHtml(testimonial.author_name)}</td>
+                <td>${escapeHtml(testimonial.author_position)}</td>
+                <td>${escapeHtml(testimonial.content.substring(0, 80))}...</td>
                 <td class="actions">
                     <button class="btn-action btn-edit" onclick="dashboard.editTestimonial(Number(${testimonial.id}))">
                         <i class="fas fa-edit"></i> Modifier
@@ -493,10 +502,10 @@ function loadCasesTable() {
     data.cases.forEach(caseItem => {
         const row = `
             <tr>
-                <td>${caseItem.title}</td>
-                <td>${caseItem.category}</td>
-                <td>${caseItem.amount}</td>
-                <td><span style="color: var(--success);">${caseItem.result}</span></td>
+                <td>${escapeHtml(caseItem.title)}</td>
+                <td>${escapeHtml(caseItem.category)}</td>
+                <td>${escapeHtml(caseItem.amount)}</td>
+                <td><span style="color: var(--success);">${escapeHtml(caseItem.result)}</span></td>
                 <td class="actions">
                     <button class="btn-action btn-edit" onclick="dashboard.editCase(Number(${caseItem.id}))">
                         <i class="fas fa-edit"></i> Modifier
@@ -520,10 +529,10 @@ function loadBlogTable() {
     data.blog.forEach(blogItem => {
         const row = `
             <tr>
-                <td>${blogItem.title}</td>
-                <td>${blogItem.category}</td>
+                <td>${escapeHtml(blogItem.title)}</td>
+                <td>${escapeHtml(blogItem.category)}</td>
                 <td>${formatDate(blogItem.created_at)}</td>
-                <td>${blogItem.status}</td>
+                <td>${escapeHtml(blogItem.status)}</td>
                 <td class="actions">
                     <button class="btn-action btn-edit" onclick="dashboard.editBlog(Number(${blogItem.id}))">
                         <i class="fas fa-edit"></i> Modifier
@@ -548,8 +557,8 @@ function loadFormationsTable() {
         const row = `
             <tr>
                 <td><i class="${formation.icon}"></i></td>
-                <td>${formation.title}</td>
-                <td>${formation.description}</td>
+                <td>${escapeHtml(formation.title)}</td>
+                <td>${escapeHtml(formation.description)}</td>
                 <td class="actions">
                     <button class="btn-action btn-edit" onclick="dashboard.editFormation(Number(${formation.id}))">
                         <i class="fas fa-edit"></i> Modifier
@@ -581,10 +590,10 @@ function loadFormationRegistrationsTable() {
         const statusColor = item.status === 'Confirmé' ? 'var(--success)' : 'var(--warning)';
         const row = `
             <tr>
-                <td>${formationTitle}</td>
-                <td>${item.name}</td>
-                <td>${item.email}</td>
-                <td>${item.phone || '-'}</td>
+                <td>${escapeHtml(formationTitle)}</td>
+                <td>${escapeHtml(item.name)}</td>
+                <td>${escapeHtml(item.email)}</td>
+                <td>${escapeHtml(item.phone || '-')}</td>
                 <td>${formatDate(item.created_at)}</td>
                 <td><span style="color: ${statusColor}; font-weight: 600;">${item.status}</span></td>
                 <td class="actions">
@@ -673,14 +682,14 @@ function loadAppointmentsTable() {
         const statusColor = item.status === 'Confirmé' ? 'var(--success)' : 'var(--warning)';
         const row = `
             <tr>
-                <td>${item.name}</td>
+                <td>${escapeHtml(item.name)}</td>
                 <td>
-                    <div>${item.email}</div>
-                    <div style="font-size: 0.9rem; color: var(--gray);">${item.phone}</div>
+                    <div>${escapeHtml(item.email)}</div>
+                    <div style="font-size: 0.9rem; color: var(--gray);">${escapeHtml(item.phone)}</div>
                 </td>
                 <td>${item.date} à ${item.time}</td>
-                <td>${item.service}</td>
-                <td>${item.message || '-'}</td>
+                <td>${escapeHtml(item.service)}</td>
+                <td>${escapeHtml(item.message || '-')}</td>
                 <td><span style="color: ${statusColor}; font-weight: 600;">${item.status}</span></td>
                 <td class="actions">
                     ${item.status !== 'Confirmé' ? 
