@@ -2,7 +2,17 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <meta name="theme-color" content="#1a3a5f">
+    <meta name="description" content="Cabinet de Conseil Juridique à Cotonou, Bénin - Services juridiques professionnels et conseil expert">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Juris Ark">
+    <meta name="apple-mobile-web-app-home-indicator" content="black">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%231a3a5f' width='180' height='180' rx='40'/><text x='50%' y='50%' font-size='80' font-weight='bold' fill='%23c9a96e' text-anchor='middle' dominant-baseline='middle' font-family='serif'>⚖</text></svg>">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231a3a5f' width='100' height='100'/><text x='50%' y='50%' font-size='50' font-weight='bold' fill='%23c9a96e' text-anchor='middle' dominant-baseline='middle' font-family='serif'>⚖</text></svg>">
     <title>Juris Ark - Cabinet de Conseil Juridique | Cotonou, Bénin</title>
     
     <!-- Google Fonts -->
@@ -1496,23 +1506,11 @@
                 display: block;
             }
             
-            nav {
-                width: 100%;
-                max-height: 0;
-                overflow: hidden;
-                transition: max-height 0.5s ease;
-            }
-            
-            nav.active {
-                max-height: 300px;
-            }
-            
             nav ul {
-                flex-direction: column;
-                text-align: center;
-                gap: var(--spacing-sm);
-                margin-top: var(--spacing-sm);
+                flex-wrap: wrap;
+                justify-content: center;
             }
+            
             
             .chat-container {
                 width: 300px;
@@ -1553,6 +1551,56 @@
             }
         }
     </style>
+    <style>
+        /* Mobile / PWA specific styles */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block; }
+            nav#mainNav {
+                position: fixed;
+                top: 72px;
+                right: 0;
+                height: calc(100% - 72px);
+                width: 84%;
+                max-width: 320px;
+                background: white;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                z-index: 1500;
+            }
+
+            nav#mainNav.active { transform: translateX(0); }
+
+            nav#mainNav ul {
+                display: flex;
+                flex-direction: column;
+                gap: 0;
+                padding: 1rem 1.2rem;
+            }
+
+            nav#mainNav li { border-bottom: 1px solid var(--light-gray); }
+
+            nav#mainNav a { display: block; padding: 16px 0; }
+
+            .hero { padding: 6rem 0 4rem; }
+        }
+
+        /* Floating install button */
+        .install-btn {
+            position: fixed;
+            right: 16px;
+            bottom: 86px;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 12px;
+            box-shadow: var(--box-shadow-lg);
+            font-weight: 700;
+            z-index: 2000;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     <!-- ===== HEADER ===== -->
@@ -1560,7 +1608,7 @@
         <div class="container header-container">
             <div class="logo">
                 <div class="logo-icon">
-                    <img src="admin/assets/logo.jpg" alt="Juris Ark Logo" style="height: 50px;">
+                    <img src="admin/assets/logo.jpg" alt="Juris Ark Logo" style="height: 50px; border-radius:50%">
                 </div>
                 <div class="logo-text">
                     <h1>JURISARK</h1>
@@ -2039,7 +2087,10 @@
         <div class="container">
             <div class="footer-container">
                 <div class="footer-column">
-                    <h3>JURIS ARK</h3>
+                    <h3>
+                        <div class="logo-icon">
+                    <img src="admin/assets/logo.jpg" alt="Juris Ark Logo" style="height: 50px; border-radius:50%">
+                </div>JURIS ARK</h3>
                     <p>Cabinet de conseil juridique offrant des services professionnels à Cotonou, Bénin. Notre expertise couvre tous les domaines du droit pour particuliers et entreprises.</p>
                     <div class="social-icons">
                         <a href="#"><i class="fab fa-facebook-f"></i></a>
@@ -2116,8 +2167,6 @@
                     initStatsCounter();
                     initFormations();
                     
-                    // Initialiser la navigation mobile
-                    initMobileMenu();
                     
                     // Initialiser les formulaires
                     initForms();
@@ -2858,28 +2907,6 @@
             observer.observe(document.querySelector('.stats-section'));
         }
         
-        function initMobileMenu() {
-            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-            const mainNav = document.getElementById('mainNav');
-            
-            mobileMenuBtn.addEventListener('click', function() {
-                mainNav.classList.toggle('active');
-                const icon = this.querySelector('i');
-                if (icon.classList.contains('fa-bars')) {
-                    icon.classList.replace('fa-bars', 'fa-times');
-                } else {
-                    icon.classList.replace('fa-times', 'fa-bars');
-                }
-            });
-            
-            // Fermer le menu au clic sur un lien
-            document.querySelectorAll('nav a').forEach(link => {
-                link.addEventListener('click', function() {
-                    mainNav.classList.remove('active');
-                    mobileMenuBtn.querySelector('i').classList.replace('fa-times', 'fa-bars');
-                });
-            });
-        }
         
         function initForms() {
             // Formulaire de rendez-vous
@@ -3110,6 +3137,161 @@
                 header.style.backdropFilter = 'none';
             }
         });
+
+        // Mobile menu toggle (robust, with DOM ready, logs and click fallback)
+        (function() {
+            function initMenu() {
+                const mobileMenuBtn = document.getElementById('mobileMenuBtn') || document.querySelector('.mobile-menu-btn');
+                const mainNav = document.getElementById('mainNav') || document.querySelector('nav');
+                if (!mobileMenuBtn || !mainNav) {
+                    console.warn('Mobile menu elements not found:', { mobileMenuBtn, mainNav });
+                    return;
+                }
+
+                // ARIA defaults
+                mobileMenuBtn.setAttribute('aria-controls', 'mainNav');
+                mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                mainNav.setAttribute('aria-hidden', 'true');
+
+                function openMenu() {
+                    mainNav.classList.add('active');
+                    mobileMenuBtn.setAttribute('aria-expanded', 'true');
+                    mainNav.setAttribute('aria-hidden', 'false');
+                    document.body.classList.add('no-scroll--menu-open');
+                    const icon = mobileMenuBtn.querySelector('i');
+                    if (icon) icon.classList.replace('fa-bars', 'fa-times');
+                    console.debug('Menu opened');
+                }
+
+                function closeMenu() {
+                    mainNav.classList.remove('active');
+                    mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                    mainNav.setAttribute('aria-hidden', 'true');
+                    document.body.classList.remove('no-scroll--menu-open');
+                    const icon = mobileMenuBtn.querySelector('i');
+                    if (icon) icon.classList.replace('fa-times', 'fa-bars');
+                    console.debug('Menu closed');
+                }
+
+                function toggleMenu() {
+                    if (mainNav.classList.contains('active')) closeMenu(); else openMenu();
+                }
+
+                // Use both click and pointerup for compatibility
+                mobileMenuBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    toggleMenu();
+                });
+                mobileMenuBtn.addEventListener('pointerup', function(e) {
+                    e.stopPropagation();
+                    // pointerup may follow click; ignore duplicates by not preventing default
+                });
+
+                // Prevent clicks inside nav from closing it
+                mainNav.addEventListener('click', function(e) { e.stopPropagation(); });
+
+                // Close when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!mainNav.classList.contains('active')) return;
+                    const target = e.target;
+                    if (!mainNav.contains(target) && !mobileMenuBtn.contains(target)) {
+                        closeMenu();
+                    }
+                });
+
+                // Close on Escape
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && mainNav.classList.contains('active')) {
+                        closeMenu();
+                    }
+                });
+
+                // Helpful initial log
+                console.debug('Mobile menu initialized', { mobileMenuBtn, mainNav });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initMenu);
+            } else {
+                initMenu();
+            }
+        })();
+
+        // Register service worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(reg => console.log('ServiceWorker registered:', reg.scope))
+                    .catch(err => console.warn('ServiceWorker registration failed:', err));
+            });
+        }
+
+        // Handle Add to Home Screen (A2HS) prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // show install button
+            showInstallButton();
+        });
+
+        function showInstallButton() {
+            if (document.getElementById('installBtn')) return;
+            const btn = document.createElement('button');
+            btn.id = 'installBtn';
+            btn.className = 'install-btn';
+            btn.textContent = 'Installer';
+            btn.addEventListener('click', async () => {
+                btn.disabled = true;
+                if (!deferredPrompt) return;
+                deferredPrompt.prompt();
+                const choiceResult = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                btn.remove();
+                console.log('A2HS choice:', choiceResult.outcome);
+            });
+            document.body.appendChild(btn);
+        }
+
+        window.addEventListener('appinstalled', () => {
+            console.log('PWA installed');
+            const btn = document.getElementById('installBtn');
+            if (btn) btn.remove();
+        });
+
+        // Image fallback: replace broken images with an inline SVG placeholder
+        (function() {
+            const fallbackSVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'><rect width='100%25' height='100%25' fill='%23f0f0f0'/><rect x='10' y='10' width='180' height='120' rx='8' fill='%231a3a5f'/><text x='50%25' y='160' font-size='18' text-anchor='middle' fill='%23666' font-family='sans-serif'>Image non disponible</text></svg>";
+
+            function applyFallback(img) {
+                try {
+                    if (img.dataset.fallbackApplied) return;
+                    img.dataset.fallbackApplied = '1';
+                    img.src = fallbackSVG;
+                } catch (e) { console.warn('Fallback apply failed', e); }
+            }
+
+            // Attach error listeners to existing images
+            function initExisting() {
+                document.querySelectorAll('img').forEach(img => {
+                    img.addEventListener('error', () => applyFallback(img));
+                });
+            }
+
+            // Capture error events for dynamically added images
+            document.addEventListener('error', function(e) {
+                const el = e.target;
+                if (el && el.tagName === 'IMG') {
+                    applyFallback(el);
+                }
+            }, true);
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initExisting);
+            } else {
+                initExisting();
+            }
+        })();
     </script>
 </body>
 </html>
