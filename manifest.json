@@ -1,0 +1,53 @@
+{
+  "name": "Juris Ark - Cabinet de Conseil Juridique",
+  "short_name": "Juris Ark",
+  "description": "Cabinet de Conseil Juridique à Cotonou, Bénin - Services juridiques professionnels et conseil expert",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#1a3a5f",
+  "categories": ["business", "productivity"],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><defs><style>.bg{fill:%231a3a5f}.scale{fill:%23c9a96e}</style></defs><rect class='bg' width='192' height='192' rx='20'/><text x='50%' y='50%' font-size='80' font-weight='bold' class='scale' text-anchor='middle' dominant-baseline='middle' font-family='serif'>⚖</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><defs><style>.bg{fill:%231a3a5f}.scale{fill:%23c9a96e}</style></defs><rect class='bg' width='512' height='512'/><text x='50%' y='50%' font-size='220' font-weight='bold' class='scale' text-anchor='middle' dominant-baseline='middle' font-family='serif'>⚖</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><defs><style>.bg{fill:%231a3a5f}.scale{fill:%23c9a96e}</style></defs><rect class='bg' width='180' height='180' rx='40'/><text x='50%' y='50%' font-size='80' font-weight='bold' class='scale' text-anchor='middle' dominant-baseline='middle' font-family='serif'>⚖</text></svg>",
+      "sizes": "180x180",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'><defs><style>.bg{fill:%231a3a5f}.scale{fill:%23c9a96e}</style></defs><rect class='bg' width='256' height='256' rx='60'/><text x='50%' y='50%' font-size='120' font-weight='bold' class='scale' text-anchor='middle' dominant-baseline='middle' font-family='serif'>⚖</text></svg>",
+      "sizes": "256x256",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 540 720'><rect fill='%23f8f9fa' width='540' height='720'/><rect fill='%231a3a5f' width='540' height='100'/><text x='270' y='50' font-size='24' fill='%23ffffff' text-anchor='middle' dominant-baseline='middle'>Juris Ark</text></svg>",
+      "sizes": "540x720",
+      "type": "image/svg+xml",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1280 720'><rect fill='%23f8f9fa' width='1280' height='720'/><rect fill='%231a3a5f' width='1280' height='100'/><text x='640' y='50' font-size='32' fill='%23ffffff' text-anchor='middle' dominant-baseline='middle'>Juris Ark</text></svg>",
+      "sizes": "1280x720",
+      "type": "image/svg+xml",
+      "form_factor": "wide"
+    }
+  ]
+}

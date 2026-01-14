@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const { data: activitiesData, error: activitiesError } = await supabaseClient.from('activities').select('*');
         const { data: appointmentsData, error: appointmentsError } = await supabaseClient.from('appointments').select('*');
         const { data: formationsData, error: formationsError } = await supabaseClient.from('formations').select('*');
-        const { data: formationRegistrationsData, error: formationRegistrationsError } = await supabaseClient.from('formation_registregistrations').select('*');
+        const { data: formationRegistrationsData, error: formationRegistrationsError } = await supabaseClient.from('formation_registrations').select('*');
 
         if (teamError) console.error("Error fetching team_members:", teamError.message);
         if (faqError) console.error("Error fetching faq_items:", faqError.message);
@@ -662,13 +662,13 @@ function loadAppointmentsTable() {
         const statusColor = item.status === 'Confirmé' ? 'var(--success)' : 'var(--warning)';
         const row = `
             <tr>
-                <td>${item.client_name}</td>
+                <td>${item.name}</td>
                 <td>
-                    <div>${item.client_email}</div>
-                    <div style="font-size: 0.9rem; color: var(--gray);">${item.client_phone}</div>
+                    <div>${item.email}</div>
+                    <div style="font-size: 0.9rem; color: var(--gray);">${item.phone}</div>
                 </td>
-                <td>${item.appointment_date} à ${item.appointment_time}</td>
-                <td>${item.service_requested}</td>
+                <td>${item.date} à ${item.time}</td>
+                <td>${item.service}</td>
                 <td>${item.message || '-'}</td>
                 <td><span style="color: ${statusColor}; font-weight: 600;">${item.status}</span></td>
                 <td class="actions">
@@ -680,6 +680,9 @@ function loadAppointmentsTable() {
                         <i class="fas fa-check-circle"></i> Confirmé
                     </button>`
                     }
+                    <button class="btn-action btn-delete" onclick="confirmDelete('appointment', ${item.id})">
+                        <i class="fas fa-trash"></i> Supprimer
+                    </button>
                 </td>
             </tr>
         `;
@@ -696,7 +699,7 @@ async function confirmAppointment(id) {
         if (error) {
             showError(`Erreur lors de la confirmation du rendez-vous: ${error.message}`);
         } else {
-            console.log(`Appointment ${appointment.client_name} on ${appointment.appointment_date} for ${appointment.service_requested} confirmed in Supabase.`);
+            console.log(`Appointment ${appointment.name} on ${appointment.date} for ${appointment.service} confirmed in Supabase.`);
             await loadAllData(); // Reload all data to refresh tables
         }
     }

@@ -18,7 +18,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Amarna:ital,wght@0,100..700;1,100..700&family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Amarna:ital,wght@0,100..700;1,100..700&family=Roboto:opsz,wght@12..96,200..800&family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -38,6 +38,7 @@
             --accent: #2c5aa0;
             --light: #f8f9fa;
             --dark: #2c3e50;
+            --darkus: linear-gradient( to top, rgb(43, 38, 28)  , rgb(87, 83, 71) );
             --gray: #6c757d;
             --light-gray: #e9ecef;
             --success: #28a745;
@@ -80,7 +81,9 @@
             font-family: var(--font-body);
             color: var(--dark);
             line-height: 1.7;
-            background-color: #fff;
+            background:linear-gradient( to top, rgb(235, 239, 242)  , rgb(248, 247, 252) );
+        
+
             overflow-x: hidden;
         }
         
@@ -191,20 +194,23 @@
         
         /* ===== HEADER & NAVIGATION ===== */
         header {
-            background: white;
+            background: rgba(255, 255, 255, 0.451);
             box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
             position: fixed;
+            backdrop-filter: blur(15px);
             top: 0;
             width: 100%;
-            z-index: 1000;
+            z-index: 6000;
+            
+            font-family:var( --font-special);
             transition: all 0.3s ease;
         }
         
         .header-container {
             display: flex;
-            justify-content: space-between;
+            justify-content:space-between;
             align-items: center;
-            padding: 1.5rem 0;
+            padding: .1rem 0;
         }
         
         .logo {
@@ -219,14 +225,16 @@
         }
         
         .logo-text h1 {
-            font-size: 1.8rem;
+            font-size: 1.1rem;
             margin-bottom: 0;
             color: var(--primary);
+            font-weight: 700;
+            font-family: var(--font-special);
         }
         
         .logo-text p {
             color: var(--gray);
-            font-size: 0.9rem;
+            font-size: 0.6rem;
         }
         
         nav ul {
@@ -238,8 +246,8 @@
         nav a {
             text-decoration: none;
             color: var(--dark);
-            font-weight: 600;
-            font-family: var(--font-body);
+            font-weight: bold;
+            font-family: var(--font-code);
             transition: color 0.3s;
             position: relative;
             padding: 0.5rem 0;
@@ -266,8 +274,10 @@
         
         .mobile-menu-btn {
             display: none;
-            background: none;
+            background: rgba(0, 128, 0, 0);
+            border-end-start-radius: 100%;
             border: none;
+            overflow: hidden;
             font-size: 1.5rem;
             color: var(--primary);
             cursor: pointer;
@@ -275,33 +285,133 @@
         
         /* ===== HERO SECTION ===== */
         .hero {
-            background: linear-gradient(rgba(26, 58, 95, 0.9), rgba(26, 58, 95, 0.95)), 
+            background: linear-gradient(rgba(65, 75, 87, 0.9), rgba(210, 210, 240, 0.95)), 
                         url('https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
             background-size: cover;
             background-position: center;
             color: white;
-            padding: 12rem 0 8rem;
-            margin-top: 80px;
-            text-align: center;
+            padding: 8rem 0; /* Adjusted padding to be closer to header */
+            margin-top: 25px;
+            overflow: hidden;
+            text-align: center; /* Center text by default */
+        }
+
+        .hero-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: var(--spacing-lg);
         }
         
-        .hero h1 {
+        .hero-content {
+            flex: 1;
+            min-width: 300px;
             color: white;
-            font-size: 4rem;
+            text-align: left;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            color: rgb(225, 204, 164);
             margin-bottom: var(--spacing-md);
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
             font-family: var(--font-accent);
-            font-weight: 700;
+            font-weight: 300;
         }
-        
-        .hero p {
+
+        .hero-content p {
             font-size: 1.3rem;
             max-width: 800px;
             margin: 0 auto var(--spacing-lg);
             opacity: 0.9;
+             font-family:var(--font-accent);
+            
+
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-lg);
+            justify-content: center; /* Center buttons by default */
+        }
+
+        .hero-image {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+        }
+
+        .hero-image img {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            border-radius: var(--border-radius-lg);
+         /*   box-shadow: var(--box-shadow-lg); */
         }
         
-        /* ===== SECTION ÉQUIPE ===== */
+        #mainNav{
+            z-index: 6000;
+        }
+
+        @media (max-width: 992px) {
+            .hero-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            .hero-image {
+                order: -1;
+                margin-bottom: 1px;
+            }
+            .hero-content {
+                text-align: center;
+            }
+            .hero-buttons {
+                justify-content: center;
+            }
+        }
+        
+        /* The media query below was already adjusted in the previous turn, keeping it. */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+            
+            .hero {
+                padding: 6rem 0;
+            }
+            .hero-content h1 {
+                font-size: 2.8rem;
+            }
+            .hero-content p {
+                font-size: 1.1rem;
+            }
+            
+            .header-container {
+                flex-direction: column;
+                gap: var(--spacing-md);
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            
+            .chat-container {
+                width: 300px;
+                right: -20px;
+            }
+        }
         #team {
             padding: var(--spacing-xl) 0;
             background: var(--light);
@@ -1396,7 +1506,9 @@
         
         /* ===== FOOTER ===== */
         footer {
-            background: var(--dark);
+            background: var(--darkus)
+            
+        ;
             color: white;
             padding: var(--spacing-xl) 0 var(--spacing-md);
         }
@@ -1406,6 +1518,7 @@
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: var(--spacing-xl);
             margin-bottom: var(--spacing-xl);
+            
         }
         
         .footer-column h3 {
@@ -1466,7 +1579,7 @@
         @media (max-width: 1200px) {
             h1 { font-size: 3rem; }
             h2 { font-size: 2.5rem; }
-            .hero h1 { font-size: 3.5rem; }
+            .hero-content h1 { font-size: 3.5rem; }
         }
         
         @media (max-width: 992px) {
@@ -1485,11 +1598,16 @@
             h2 { font-size: 2rem; }
             
             .hero {
-                padding: 8rem 0 5rem;
+                padding: 6rem 0;
             }
-            
-            .hero h1 {
-                font-size: 2.8rem;
+            .hero-card h1 {
+                font-size: 2.5rem;
+            }
+            .hero-card {
+                text-align: center;
+            }
+            .hero-buttons {
+                justify-content: center;
             }
             
             .header-container {
@@ -1549,41 +1667,84 @@
             .chat-container {
                 width: 280px;
             }
+             .hero-image img {
+            width: 150px;
+          border: 2px solid rgb(130, 137, 135);
+            height: 190px;
+            border-radius: var(--border-radius-lg);
+         /*   box-shadow: var(--box-shadow-lg); */
+        }
+          .hero-image {
+                order: -1;
+                margin-bottom: 1px;
+            }
         }
     </style>
     <style>
-        /* Mobile / PWA specific styles */
-        @media (max-width: 900px) {
-            .mobile-menu-btn { display: block; }
-            nav#mainNav {
-                position: fixed;
-                top: 72px;
-                right: 0;
-                height: calc(100% - 72px);
-                width: 84%;
-                max-width: 320px;
-                background: white;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-                transform: translateX(100%);
-                transition: transform 0.3s ease;
-                z-index: 1500;
-            }
+/* ===== NEW MOBILE MENU STYLES (like dashboard) ===== */
+@media (max-width: 992px) {
+    .mobile-menu-btn {
+        display: block;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1600;
+    }
 
-            nav#mainNav.active { transform: translateX(0); }
+    nav#mainNav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh; /* Use viewport height */
+        width: 280px;
+        background: var(--primary);
+        box-shadow: 0 0 30px rgba(0,0,0,0.2);
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+        z-index: 2500; /* High z-index */
+        overflow-y: auto;
+    }
 
-            nav#mainNav ul {
-                display: flex;
-                flex-direction: column;
-                gap: 0;
-                padding: 1rem 1.2rem;
-            }
+    nav#mainNav.active {
+        transform: translateX(0);
+    }
 
-            nav#mainNav li { border-bottom: 1px solid var(--light-gray); }
+    nav#mainNav ul {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        padding: 80px 0 20px 0;
+    }
 
-            nav#mainNav a { display: block; padding: 16px 0; }
+    nav#mainNav li {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        width: 100%;
+    }
 
-            .hero { padding: 6rem 0 4rem; }
+    nav#mainNav a {
+        display: block;
+        padding: 18px 25px;
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        font-weight: 600;
+        transition: background 0.3s, color 0.3s;
+        border-left: 4px solid transparent;
+    }
+
+    nav#mainNav a:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: white;
+        border-left-color: var(--secondary);
+    }
+     .hero-image img {
+            width: 190px;
+          
+            height: 190px;
+            border-radius: var(--border-radius-lg);
+         /*   box-shadow: var(--box-shadow-lg); */
         }
+}
+
 
         /* Floating install button */
         .install-btn {
@@ -1599,6 +1760,10 @@
             font-weight: 700;
             z-index: 2000;
             cursor: pointer;
+        }
+
+        body.no-scroll--menu-open {
+            overflow: hidden;
         }
     </style>
 </head>
@@ -1620,7 +1785,7 @@
                 <i class="fas fa-bars"></i>
             </button>
             
-            <nav id="mainNav">
+            <nav id="mainNav" style="z-index: 2500;">
                 <ul>
                     <li><a href="#home">Accueil</a></li>
                     <li><a href="#services">Services</a></li>
@@ -1636,12 +1801,17 @@
 
     <!-- ===== HERO SECTION ===== -->
     <section class="hero" id="home">
-        <div class="container">
-            <h1>L’expertise du droit au service de votre tranquillité</h1>
-            <p>JURISARK est votre partenaire de confiance pour toutes vos questions juridiques et fiscales. Nous mettons notre expertise à votre service pour assurer votre tranquillité d'esprit.</p>
-            <div style="display: flex; gap: 20px; justify-content: center; margin-top: 40px;">
-                <a href="#appointment" class="btn">Prendre Rendez-vous</a>
-                <a href="#services" class="btn btn-secondary">Nos Services</a>
+        <div class="container hero-container">
+            <div class="hero-content">
+                <h1>L’expertise du droit au service de votre tranquillité</h1>
+                <p>JURISARK est votre partenaire de confiance pour toutes vos questions juridiques et fiscales. Nous mettons notre expertise à votre service pour assurer votre tranquillité d'esprit.</p>
+                <div class="hero-buttons">
+                    <a href="#appointment" class="btn">Prendre Rendez-vous</a>
+                    <a href="#services" class="btn btn-secondary">Nos Services</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="undraw_judge_hyqv.svg" alt="Illustration juridique" style="width: 100%;">
             </div>
         </div>
     </section>
@@ -1650,7 +1820,8 @@
     <section id="services" class="services-section" style="padding: var(--spacing-xl) 0;">
         <div class="container">
             <div class="section-title">
-                <h2 class="center">Nos Services et Domaines d'Expertise</h2>
+                
+                <h2 class="center"><i style=" padding: 15px ;margin-inline: 3px ;  border-radius :60px ; background: #e7eaec;" class="fas fa-hand"></i>Nos Services et Domaines d'Expertise</h2>
                 <p>Découvrez l'étendue de nos compétences juridiques et fiscales, adaptées à vos besoins spécifiques.</p>
             </div>
 
@@ -1683,7 +1854,7 @@
     <section id="formations" class="formations-section" style="padding: var(--spacing-xl) 0; background: var(--light);">
         <div class="container">
             <div class="section-title">
-                <h2 class="center">Formations & Certifications</h2>
+                <h2 class="center"> <i style=" padding: 15px ;margin-inline: 3px ;  border-radius :60px ; background: #e7eaec;" class="fas fa-check-circle"></i>Formations & Certifications</h2>
                 <p>Renforcez vos compétences avec nos programmes de certification destinés aux professionnels et aux particuliers.</p>
             </div>
 
@@ -1697,7 +1868,7 @@
     <section id="team">
         <div class="container">
             <div class="section-title">
-                <h2 class="center">Notre Équipe d'Experts</h2>
+                <h2 class="center"> <i style=" padding: 15px ;margin-inline: 3px ;  border-radius :60px ; background: #e7eaec;" class="fas fa-user-cog"></i>Notre Équipe d'Experts</h2>
                 <p>Rencontrez nos avocats et consultants dédiés à la réussite de vos projets juridiques</p>
             </div>
             
@@ -1711,7 +1882,7 @@
     <section id="blog">
         <div class="container">
             <div class="section-title">
-                <h2 class="center">Actualités Juridiques</h2>
+                <h2 class="center"> <i style=" padding: 15px ;margin-inline: 3px ;  border-radius :60px ; background: #e7eaec;" class="fas fa-newspaper"></i>Actualités Juridiques</h2>
                 <p>Restez informé des dernières évolutions législatives et jurisprudentielles</p>
             </div>
             
@@ -1725,7 +1896,7 @@
     <section id="faq">
         <div class="container">
             <div class="section-title">
-                <h2 class="center">Questions Fréquentes</h2>
+                <h2 class="center">  <i style=" padding: 15px ;margin-inline: 3px ;  border-radius :60px ; background: #e7eaec;" class="fas fa-info-circle"></i>Questions Fréquentes</h2>
                 <p>Retrouvez les réponses aux questions les plus courantes sur nos services</p>
             </div>
             
@@ -1739,7 +1910,7 @@
     <section id="testimonials">
         <div class="container">
             <div class="section-title">
-                <h2 class="center">Témoignages Clients</h2>
+                <h2 class="center"> <i style=" padding: 15px ;margin-inline: 3px ;  border-radius :60px ; background: #e7eaec;" class="fas fa-quote-left"></i>Témoignages Clients</h2>
                 <p>Ce que nos clients disent de notre expertise et de notre accompagnement</p>
             </div>
             
@@ -1758,18 +1929,18 @@
     <section id="appointment">
         <div class="container">
             <div class="section-title">
-                <h2 class="center">Prendre Rendez-vous</h2>
+                <h2 class="center"> <i style=" padding: 15px ;margin-inline: 3px ;  border-radius :60px ; background: #e7eaec;" class="fas fa-calendar"></i>Prendre Rendez-vous</h2>
                 <p>Planifiez une consultation avec nos experts en quelques clics</p>
             </div>
             
             <div class="appointment-container">
                 <div class="calendar-container">
-                    <h3>Calendrier des Disponibilités</h3>
+                    <h3>Calendrier des Disponibilités <i style=" padding: 15px ;margin-inline: 3px ;  border-radius :60px ; background: #e7eaec;" class="fas fa-calendar-alt"></i></h3>
                     <div id="calendar"></div>
                 </div>
                 
                 <div class="appointment-form">
-                    <h3>Formulaire de Rendez-vous</h3>
+                    <h3>Formulaire de Rendez-vous <i style=" padding: 15px ;margin-inline: 3px ;  border-radius :60px ; background: #e7eaec;" class="fas fa-calendar-alt"></i></h3>
                     <form id="appointmentForm">
                         <div class="form-group">
                             <label for="appointmentName">Nom complet *</label>
@@ -1830,6 +2001,7 @@
             <div class="section-title">
                 <h2 class="center">Calculateurs Juridiques</h2>
                 <p>Estimez vos coûts et délais avec nos outils interactifs</p>
+                <i style=" padding: 15px ;margin-inline: 3px ;  border-radius :60px ; background: #e7eaec;" class="fas fa-chart-line"></i>
             </div>
             
             <div class="calculators-grid">
@@ -1903,7 +2075,7 @@
     <section id="jurisdictions">
         <div class="container">
             <div class="section-title">
-                <h2 class="center">Zones d'Intervention</h2>
+                <h2 class="center">Zones d'Intervention <i style=" padding: 15px ;margin-inline: 3px ;  border-radius :60px ; background: #e7eaec;" class="fas fa-location"></i></h2>
                 <p>Nous intervenons dans toutes les juridictions du Bénin et à l'international</p>
             </div>
             
@@ -1916,7 +2088,7 @@
                 </div>
                 
                 <div class="jurisdiction-info">
-                    <h3>Juridictions Couvertes</h3>
+                    <h3>Juridictions Couvertes <i style=" padding: 15px ;margin-inline: 3px ;  border-radius :60px ; background: #e7eaec;" class="fas fa-location"></i></h3>
                     <p>Notre cabinet intervient devant toutes les juridictions béninoises et dans le cadre d'arbitrages internationaux.</p>
                     
                     <div class="jurisdiction-list">
@@ -1933,7 +2105,7 @@
     <section id="case-studies">
         <div class="container">
             <div class="section-title">
-                <h2 class="center">Succès d'Affaires</h2>
+                <h2 class="center">Succès d'Affaires <i style=" padding: 15px ;margin-inline: 3px ;  border-radius :60px ; background: #e7eaec;" class="fas fa-check"></i></h2>
                 <p>Découvrez une sélection de dossiers que nous avons traités avec succès</p>
             </div>
             
@@ -1965,6 +2137,7 @@
     <section class="newsletter">
         <div class="container">
             <div class="newsletter-content">
+                <i style=" padding: 15px ;margin-inline: 3px ;  border-radius :60px ; background: #183149; color: #5b6672;" class="fas fa-message"></i>
                 <h2>Newsletter Juridique</h2>
                 <p>Recevez chaque mois nos analyses, les dernières actualités législatives et des conseils pratiques.</p>
                 
@@ -1987,6 +2160,7 @@
     <section id="partners">
         <div class="container">
             <div class="section-title">
+                <i style=" padding: 15px ;margin-inline: 3px ;  border-radius :60px ; background: #e7eaec;" class="fas fa-handshake"></i>
                 <h2 class="center">Partenaires & Associations</h2>
                 <p>Nous collaborons avec les principales institutions juridiques et professionnelles</p>
             </div>
