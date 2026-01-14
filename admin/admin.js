@@ -18,7 +18,6 @@ async function loadAllData() {
     try {
         console.log('Chargement des données depuis Supabase...');
         
-        // Utilisez des variables distinctes au lieu de la déstructuration complexe
         const teamResult = await supabaseClient.from('team_members').select('*');
         const faqResult = await supabaseClient.from('faq_items').select('*');
         const deadlinesResult = await supabaseClient.from('deadlines').select('*');
@@ -58,13 +57,35 @@ async function loadAllData() {
             formation_registrations: formationRegistrationsResult.data || [],
         };
         
-        // ... reste du code inchangé ...
+        console.log('Données chargées:', {
+            team: data.team.length,
+            faq: data.faq.length,
+            deadlines: data.deadlines.length,
+            testimonials: data.testimonials.length,
+            cases: data.cases.length,
+            blog: data.blog.length,
+            appointments: data.appointments.length,
+            formations: data.formations.length,
+            registrations: data.formation_registrations.length
+        });
+
+        updateStats();
+        loadActivities();
+        
+        if (currentSection !== 'dashboard' && currentSection !== 'settings') {
+            loadSectionData(currentSection);
+        }
+        
+        if (errors.length > 0) {
+            showWarning(`Certaines tables n'ont pas pu être chargées: ${errors.join(', ')}`);
+        }
         
     } catch (error) {
         console.error('Erreur lors du chargement des données:', error);
         showError('Erreur de connexion à la base de données');
     }
 }
+
 window.dashboard = {
     loadAllData,
     editTeam,
@@ -624,10 +645,10 @@ function loadDeadlinesTable() {
                 <td>${escapeHtml(deadline.description)}</td>
                 <td>${deadline.urgent ? '<span style="color: var(--warning);"><i class="fas fa-exclamation-circle"></i> Oui</span>' : 'Non'}</td>
                 <td class="actions">
-                    <button class="btn-action btn-edit" onclick="dashboard.editDeadline(${deadline.id})">
+                    <button class="btn-action btn-edit" onclick="dashboard.editDeadline(Number(${deadline.id}))">
                         <i class="fas fa-edit"></i> Modifier
                     </button>
-                    <button class="btn-action btn-delete" onclick="dashboard.confirmDelete('deadline', ${deadline.id}, this)">
+                    <button class="btn-action btn-delete" onclick="dashboard.confirmDelete('deadline', Number(${deadline.id}), this)">
                         <i class="fas fa-trash"></i> Supprimer
                     </button>
                 </td>
@@ -655,10 +676,10 @@ function loadTestimonialsTable() {
                 <td>${escapeHtml(testimonial.author_position)}</td>
                 <td>${escapeHtml(testimonial.content.substring(0, 80))}...</td>
                 <td class="actions">
-                    <button class="btn-action btn-edit" onclick="dashboard.editTestimonial(${testimonial.id})">
+                    <button class="btn-action btn-edit" onclick="dashboard.editTestimonial(Number(${testimonial.id}))">
                         <i class="fas fa-edit"></i> Modifier
                     </button>
-                    <button class="btn-action btn-delete" onclick="dashboard.confirmDelete('testimonial', ${testimonial.id}, this)">
+                    <button class="btn-action btn-delete" onclick="dashboard.confirmDelete('testimonial', Number(${testimonial.id}), this)">
                         <i class="fas fa-trash"></i> Supprimer
                     </button>
                 </td>
@@ -687,10 +708,10 @@ function loadCasesTable() {
                 <td>${escapeHtml(caseItem.amount)}</td>
                 <td><span style="color: var(--success);">${escapeHtml(caseItem.result)}</span></td>
                 <td class="actions">
-                    <button class="btn-action btn-edit" onclick="dashboard.editCase(${caseItem.id})">
+                    <button class="btn-action btn-edit" onclick="dashboard.editCase(Number(${caseItem.id}))">
                         <i class="fas fa-edit"></i> Modifier
                     </button>
-                    <button class="btn-action btn-delete" onclick="dashboard.confirmDelete('case', ${caseItem.id}, this)">
+                    <button class="btn-action btn-delete" onclick="dashboard.confirmDelete('case', Number(${caseItem.id}), this)">
                         <i class="fas fa-trash"></i> Supprimer
                     </button>
                 </td>
@@ -719,10 +740,10 @@ function loadBlogTable() {
                 <td>${formatDate(blogItem.created_at)}</td>
                 <td>${escapeHtml(blogItem.status)}</td>
                 <td class="actions">
-                    <button class="btn-action btn-edit" onclick="dashboard.editBlog(${blogItem.id})">
+                    <button class="btn-action btn-edit" onclick="dashboard.editBlog(Number(${blogItem.id}))">
                         <i class="fas fa-edit"></i> Modifier
                     </button>
-                    <button class="btn-action btn-delete" onclick="dashboard.confirmDelete('blog', ${blogItem.id}, this)">
+                    <button class="btn-action btn-delete" onclick="dashboard.confirmDelete('blog', Number(${blogItem.id}), this)">
                         <i class="fas fa-trash"></i> Supprimer
                     </button>
                 </td>
@@ -750,10 +771,10 @@ function loadFormationsTable() {
                 <td>${escapeHtml(formation.title)}</td>
                 <td>${escapeHtml(formation.description.substring(0, 80))}...</td>
                 <td class="actions">
-                    <button class="btn-action btn-edit" onclick="dashboard.editFormation(${formation.id})">
+                    <button class="btn-action btn-edit" onclick="dashboard.editFormation(Number(${formation.id}))">
                         <i class="fas fa-edit"></i> Modifier
                     </button>
-                    <button class="btn-action btn-delete" onclick="dashboard.confirmDelete('formation', ${formation.id}, this)">
+                    <button class="btn-action btn-delete" onclick="dashboard.confirmDelete('formation', Number(${formation.id}), this)">
                         <i class="fas fa-trash"></i> Supprimer
                     </button>
                 </td>
@@ -788,12 +809,12 @@ function loadFormationRegistrationsTable() {
                 <td><span style="color: ${statusColor}; font-weight: 600;">${item.status}</span></td>
                 <td class="actions">
                     ${item.status !== 'Confirmé' ? 
-                    `<button class="btn-action btn-edit" onclick="dashboard.confirmFormationRegistration(${item.id})">
+                    `<button class="btn-action btn-edit" onclick="dashboard.confirmFormationRegistration(Number(${item.id}))">
                         <i class="fas fa-check"></i> Confirmer
                     </button>` : 
                     ''
                     }
-                    <button class="btn-action btn-delete" onclick="dashboard.confirmDelete('formation_registration', ${item.id}, this)">
+                    <button class="btn-action btn-delete" onclick="dashboard.confirmDelete('formation_registration', Number(${item.id}), this)">
                         <i class="fas fa-trash"></i> Supprimer
                     </button>
                 </td>
@@ -808,10 +829,10 @@ async function confirmFormationRegistration(id) {
     if (confirmBtn) showLoading(confirmBtn, 'Confirmation...');
     
     try {
-        const { error } = await supabaseClient.from('formation_registrations').update({ status: 'Confirmé' }).eq('id', id);
+        const result = await supabaseClient.from('formation_registrations').update({ status: 'Confirmé' }).eq('id', id);
 
-        if (error) {
-            throw error;
+        if (result.error) {
+            throw result.error;
         }
         
         console.log(`Inscription ${id} confirmée.`);
@@ -851,14 +872,14 @@ function loadAppointmentsTable() {
                 <td><span style="color: ${statusColor}; font-weight: 600;">${item.status}</span></td>
                 <td class="actions">
                     ${item.status !== 'Confirmé' ? 
-                    `<button class="btn-action btn-edit" onclick="dashboard.confirmAppointment(${item.id})">
+                    `<button class="btn-action btn-edit" onclick="dashboard.confirmAppointment(Number(${item.id}))">
                         <i class="fas fa-check"></i> Confirmer
                     </button>` : 
                     `<button class="btn-action" disabled>
                         <i class="fas fa-check-circle"></i> Confirmé
                     </button>`
                     }
-                    <button class="btn-action btn-delete" onclick="dashboard.confirmDelete('appointment', ${item.id}, this)">
+                    <button class="btn-action btn-delete" onclick="dashboard.confirmDelete('appointment', Number(${item.id}), this)">
                         <i class="fas fa-trash"></i> Supprimer
                     </button>
                 </td>
@@ -873,10 +894,10 @@ async function confirmAppointment(id) {
     if (confirmBtn) showLoading(confirmBtn, 'Confirmation...');
     
     try {
-        const { error } = await supabaseClient.from('appointments').update({ status: 'Confirmé' }).eq('id', id);
+        const result = await supabaseClient.from('appointments').update({ status: 'Confirmé' }).eq('id', id);
 
-        if (error) {
-            throw error;
+        if (result.error) {
+            throw result.error;
         }
         
         console.log(`Rendez-vous ${id} confirmé.`);
@@ -993,7 +1014,23 @@ async function deleteItem() {
             throw result.error;
         }
         
-        // ... reste du code inchangé ...
+        console.log(`${deleteType} (ID: ${itemToDelete}) supprimé avec succès.`);
+        
+        // Supprimer la ligne du DOM
+        if (rowToRemoveElement && rowToRemoveElement.parentNode) {
+            rowToRemoveElement.remove();
+        }
+        
+        // Recharger les données
+        await window.dashboard.loadAllData();
+        
+        // Fermer le modal
+        closeModal('confirm');
+        
+        // Reset des variables
+        itemToDelete = null;
+        deleteType = null;
+        rowToRemoveElement = null;
         
     } catch (error) {
         console.error('Erreur lors de la suppression:', error);
@@ -1432,6 +1469,7 @@ async function saveSecuritySettings() {
         hideLoading(saveButton);
     }
 }
+
 // ===== FONCTIONS UTILITAIRES =====
 
 function showError(message) {
