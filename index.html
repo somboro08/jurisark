@@ -2621,10 +2621,10 @@
                             ${testimonial.content}
                         </div>
                         <div class="testimonial-author">
-                            <img src="${testimonial.img_url || 'https://via.placeholder.com/100x100.png?text=Photo'}" alt="${testimonial.author}">
+                            <img src="${testimonial.author_photo_url || 'https://via.placeholder.com/100x100.png?text=Photo'}" alt="${testimonial.author_name}">
                             <div>
-                                <h4>${testimonial.author}</h4>
-                                <p>${testimonial.position}</p>
+                                <h4>${testimonial.author_name}</h4>
+                                <p>${testimonial.author_position}</p>
                             </div>
                         </div>
                     </div>
