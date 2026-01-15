@@ -696,7 +696,7 @@ function loadAppointmentsTable() {
                     `<button class="btn-action btn-edit" onclick="dashboard.confirmAppointment('${item.id}')">
                         <i class="fas fa-check"></i> Confirmer
                     </button>` : 
-                    `<button class="btn-action" disabled>
+                    `<button class="btn-action btn-confirmed" disabled style="background-color: var(--success); color: white;">
                         <i class="fas fa-check-circle"></i> Confirmé
                     </button>`
                     }
